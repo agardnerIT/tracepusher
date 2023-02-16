@@ -24,7 +24,7 @@ Add `-d` or `--debug` for extra output
 ## Spin up OpenTelemetry Collector
 
 ## Download Collector
-Download and extract the collector binary for your platform from here.
+Download and extract the collector binary for your platform from [here](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.71.0).
 
 For example, for windows: `https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.70.0/otelcol-contrib_0.70.0_windows_amd64.tar.gz`
 
