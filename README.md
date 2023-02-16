@@ -1,6 +1,6 @@
 # OpenTelemetry TracePusher
 
-Generate and push dummy OpenTelemetry Trace data to an endpoint in JSON format
+Generate and push dummy OpenTelemetry Trace data to an endpoint in JSON format.
 
 # Requirements and Prequisites
 - A running OpenTelemetry collector (see below)
