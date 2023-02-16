@@ -24,6 +24,10 @@ Add `-d` or `--debug` for extra output
 ## Spin up OpenTelemetry Collector
 
 ## Download Collector
+The Python script will generate and push a trace to an OpenTelemetry collector. So of course, you need one available.
+
+If you have a collector already available, go on ahead to run the too. If you **don't** have one already available, follow these steps.
+
 Download and extract the collector binary for your platform from [here](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.71.0).
 
 For example, for windows: `https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.71.0/otelcol-contrib_0.70.0_windows_amd64.tar.gz`
