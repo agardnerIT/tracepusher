@@ -26,7 +26,7 @@ Add `-d` or `--debug` for extra output
 ## Download Collector
 The Python script will generate and push a trace to an OpenTelemetry collector. So of course, you need one available.
 
-If you have a collector already available, go on ahead to run the too. If you **don't** have one already available, follow these steps.
+If you have a collector already available, go on ahead to run the tool. If you **don't** have one already available, follow these steps.
 
 Download and extract the collector binary for your platform from [here](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.71.0).
 
