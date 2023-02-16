@@ -2,6 +2,9 @@
 
 Generate and push dummy OpenTelemetry Trace data to an endpoint in JSON format.
 
+![architecture](assets/architecture.png)
+![trace](assets/trace.png)
+
 # Requirements and Prequisites
 - A running OpenTelemetry collector (see below)
 - Requires `requests` module (`pip install -r requirements.txt`)
