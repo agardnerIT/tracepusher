@@ -14,7 +14,7 @@ Generate and push dummy OpenTelemetry Trace data to an endpoint in JSON format.
 `python tracepusher.py -h` or `python tracepusher.py --help` shows help text.
 
 ```
-python tracepusher.py http://OTEL-COLLECTOR-ENDPOINT:4318 service_name span_name SPAN_TIME_IN_SECONDS
+python tracepusher.py http(s)://OTEL-COLLECTOR-ENDPOINT:4318 service_name span_name SPAN_TIME_IN_SECONDS
 eg. python tracepusher.py http://localhost:4318 tracepusher my-span 2
 ```
 
