@@ -1,6 +1,6 @@
 # OpenTelemetry TracePusher
 
-Generate and push dummy OpenTelemetry Trace data to an endpoint in JSON format.
+Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
 ![architecture](assets/architecture.png)
 ![trace](assets/trace.png)
