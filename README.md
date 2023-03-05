@@ -42,7 +42,7 @@ The OpenTelemetry collector needs a config file - this is how you decide which t
 
 Save this file alongside `otelcol.exe` as `config.yaml`.
 
-You will need to modify the `otlphttp` code for your backend. The example gives is for Dynatrace trace ingest.
+You will need to modify the `otlphttp` code for your backend. The example given is for Dynatrace trace ingest.
 For Dynatrace, the API token needs `Ingest OpenTelemetry traces` permissions.
 
 ```
