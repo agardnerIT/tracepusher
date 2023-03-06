@@ -18,11 +18,23 @@ python tracepusher.py http(s)://OTEL-COLLECTOR-ENDPOINT:4318 service_name span_n
 eg. python tracepusher.py http://localhost:4318 tracepusher my-span 2
 ```
 
+or:
+
+```
+docker run gardnera/tracepusher:v0.3.0 http(s)://OTEL-COLLECTOR-ENDPOINT:4318 service_name span_name SPAN_TIME_IN_SECONDS
+```
+
 ## Dry Run Mode
 Add `--dry` or `--dry-run` mode to run without actually pushing any data.
 
 ## Debug Mode
 Add `-d` or `--debug` for extra output
+
+## Time Shifting
+In "default mode" tracepusher starts a trace `now` and finishes it `SPAN_TIME_IN_SECONDS` in the future.
+You may want to push timings for traces that have already occurred (eg. shell scripts). See [#4|https://github.com/agardnerIT/tracepusher/issues/4].
+
+If `--shift` is added as the final parameter, `start` and `end` times will be shifted back by `SPAN_TIME_IN_SECONDS`.
 
 ## Spin up OpenTelemetry Collector
 
@@ -91,6 +103,12 @@ Open a command / terminal window and run:
 
 ```
 otelcol.exe --config config.yaml
+```
+
+Then run tracepusher:
+
+```
+python tracepusher.py http://localhost:4318 tracepusher my-span 2
 ```
 
 ----------------------
