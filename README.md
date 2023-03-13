@@ -8,33 +8,49 @@ Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 # Requirements and Prequisites
 - A running OpenTelemetry collector (see below)
 - Requires `requests` module (`pip install -r requirements.txt`)
+- Requires Python 3 or docker.
 
-# Usage
+# Python3 Usage
 
-`python tracepusher.py -h` or `python tracepusher.py --help` shows help text.
-
-```
-python tracepusher.py http(s)://OTEL-COLLECTOR-ENDPOINT:4318 service_name span_name SPAN_TIME_IN_SECONDS
-eg. python tracepusher.py http://localhost:4318 tracepusher my-span 2
-```
-
-or:
+`python3 tracepusher.py -h` or `python3 tracepusher.py --help` shows help text.
 
 ```
-docker run gardnera/tracepusher:v0.3.1 http(s)://OTEL-COLLECTOR-ENDPOINT:4318 service_name span_name SPAN_TIME_IN_SECONDS
+python tracepusher.py \
+--endpoint=http(s)://OTEL-COLLECTOR-ENDPOINT:4318
+--service-name=service_name \
+--span-name=spanA \
+--duration=2
+```
+
+## Docker Usage
+
+```
+docker run gardnera/tracepusher:v0.4.0 \
+-ep=http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
+-sen=service_name \
+-spn=span_name \
+-dur=SPAN_TIME_IN_SECONDS
+```
+
+### Optional Parameters:
+```
+--dry-run=True|False
+--debug=True|False
+--time-shift=True|False
 ```
 
 ## Dry Run Mode
-Add `--dry` or `--dry-run` mode to run without actually pushing any data.
+Add `--dr=True`, `--dry-run=True` or `--dry=True` to run without actually pushing any data.
 
 ## Debug Mode
-Add `-d` or `--debug` for extra output
+Add `-x=True` or `--debug=True` for extra output
 
 ## Time Shifting
 In "default mode" tracepusher starts a trace `now` and finishes it `SPAN_TIME_IN_SECONDS` in the future.
+
 You may want to push timings for traces that have already occurred (eg. shell scripts). See https://github.com/agardnerIT/tracepusher/issues/4.
 
-If `--shift` is added as the final parameter, `start` and `end` times will be shifted back by `SPAN_TIME_IN_SECONDS`.
+`--time-shift=True` means `start` and `end` times will be shifted back by whatever is specified as the `--duration`.
 
 ## Spin up OpenTelemetry Collector
 
@@ -45,7 +61,7 @@ If you have a collector already available, go on ahead to run the tool. If you *
 
 Download and extract the collector binary for your platform from [here](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.71.0).
 
-For example, for windows: `https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.71.0/otelcol-contrib_0.70.0_windows_amd64.tar.gz`
+For example, for windows: `https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.71.0/otelcol-contrib_0.71.0_windows_amd64.tar.gz`
 
 Unzip and extract so you have the binary (eg. `otelcol.exe`)
 
@@ -123,6 +139,13 @@ This tool does not replace or supercede those tools in any way. For lots of usec
 However, they hide the inner-workings (the *how*). For someone getting started or wanting to truly understand what is happening, there is "too much magic". Stuff "just works" whereas tracepusher is more explicit - and thus (I believe) easier to see how the pieces fit together.
 
 The trace data that tracepusher generates is also customisable whereas "you get what you get" with `tracegen / telemetrygen`.
+
+# Breaking Changes
+
+## v0.3.0 to v0.4.0
+Argument handling was entirely re-written for `v0.4.0` and `tracepusher` expects different arguments for [v0.3.0](https://github.com/agardnerIT/tracepusher/releases/tag/0.3.0) and [v0.4.0](https://github.com/agardnerIT/tracepusher/releases/tag/0.4.0).
+
+[Here is the readme for v0.3.0](https://github.com/agardnerIT/tracepusher/tree/88e6479213a952eed7985d28b1ef49a4396fe992).
 
 ----------------------
 
