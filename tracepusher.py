@@ -32,6 +32,8 @@ parser.add_argument('-x', '--debug', required=False, default="False")
 parser.add_argument('-ts', '--time-shift', required=False, default="False")
 parser.add_argument('-psid','--parent-span-id', required=False, default="")
 parser.add_argument('-tid', '--trace-id', required=False, default="")
+parser.add_argument('-sid', '--span-id', required=False, default="")
+
 
 args = parser.parse_args()
 
