@@ -9,10 +9,10 @@ echo "span_id: ${span_id}"
 main_time_start=0
 echo "main time_start: ${time_start}"
 
-counter=0
-limit=5
+counter=1
+limit=3
 
-while [ $counter -lt $limit ]
+while [ $counter -le $limit ]
 do
   # This is unique to this span
   sub_span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
@@ -20,7 +20,7 @@ do
   echo "loop: ${counter}"
   sleep 1
   time_end=$SECONDS
-  duration=$$(( $time_end - $time_start ))
+  duration=$(( $time_end - $time_start ))
   counter=$(( $counter + 1 ))
   echo "loop time_start: ${time_start}. time_end: ${time_end}. duration: ${duration}"
 
