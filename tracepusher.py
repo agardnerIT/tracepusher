@@ -30,6 +30,10 @@ parser.add_argument('-dur', '--duration', required=True, type=int)
 parser.add_argument('-dr','--dry-run','--dry', required=False, default="False")
 parser.add_argument('-x', '--debug', required=False, default="False")
 parser.add_argument('-ts', '--time-shift', required=False, default="False")
+parser.add_argument('-psid','--parent-span-id', required=False, default="")
+parser.add_argument('-tid', '--trace-id', required=False, default="")
+parser.add_argument('-sid', '--span-id', required=False, default="")
+
 
 args = parser.parse_args()
 
@@ -40,6 +44,9 @@ duration = args.duration
 dry_run = args.dry_run
 debug_mode = args.debug
 time_shift = args.time_shift
+parent_span_id = args.parent_span_id
+trace_id = args.trace_id
+span_id = args.span_id
 
 # Debug mode required?
 DEBUG_MODE = False
@@ -57,6 +64,11 @@ if time_shift.lower() == "true":
   print("> Time shift enabled. Will shift the start and end time back in time by DURATION seconds.")
   TIME_SHIFT = True
 
+HAS_PARENT_SPAN = False
+if parent_span_id != "":
+  print(f"> Pushing a child (sub) span with parent span id: {parent_span_id}")
+  HAS_PARENT_SPAN = True
+
 if DEBUG_MODE:
   print(f"Endpoint: {endpoint}")
   print(f"Service Name: {service_name}")
@@ -65,18 +77,27 @@ if DEBUG_MODE:
   print(f"Dry Run: {type(dry_run)} = {dry_run}")
   print(f"Debug: {type(debug_mode)} = {debug_mode}")
   print(f"Time Shift: {type(time_shift)} = {time_shift}")
+  print(f"Parent Span ID: {parent_span_id}")
+  print(f"Trace ID: {trace_id}")
+  print(f"Span ID: {span_id}")
 
 # Generate random chars for trace and span IDs
 # of 32 chars and 16 chars respectively
 # per secrets documentation
 # each byte is converted to two hex digits
 # hence this "appears" wrong by half but isn't
-trace_id = secrets.token_hex(16)
-span_id = secrets.token_hex(8)
+# If this is a child span, we already have a trace_id and parent_span_id
+# So do not generate
+if trace_id == "":
+  trace_id = secrets.token_hex(16)
+if span_id == "":
+  span_id = secrets.token_hex(8)
+
 
 if DEBUG_MODE:
   print(f"Trace ID: {trace_id}")
   print(f"Span ID: {span_id}")
+  print(f"Parent Span ID: {parent_span_id}")
 
 duration_nanos = duration * 1000000000
 # get time now
@@ -84,7 +105,7 @@ time_now = time.time_ns()
 # calculate future time by adding that many seconds
 time_future = time_now + duration_nanos
 
-# shift time_now and time_future back by (duration * 
+# shift time_now and time_future back by duration 
 if TIME_SHIFT:
    time_now = time_now - duration_nanos
    time_future = time_future - duration_nanos
@@ -134,14 +155,21 @@ trace = {
  ]
 }
 
+if HAS_PARENT_SPAN:
+  # Add parent_span_id field
+  trace['resourceSpans'][0]['scopeSpans'][0]['spans'][0]['parentSpanId'] = parent_span_id
+
 if DEBUG_MODE:
    print("Trace:")
    print(trace)
 
 if DRY_RUN:
    print(f"Collector URL: {endpoint}. Service Name: {service_name}. Span Name: {span_name}. Trace Length (seconds): {duration}")
-   print("Trace:")
-   print(trace)
+   # Only print if also not running in DEBUG_MODE
+   # Otherwise we get a double print
+   if not DEBUG_MODE:
+     print("Trace:")
+     print(trace)
    
 if not DRY_RUN:
   resp = requests.post(f"{endpoint}/v1/traces", headers={ "Content-Type": "application/json" }, json=trace)
