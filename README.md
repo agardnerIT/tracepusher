@@ -25,7 +25,7 @@ python tracepusher.py \
 ## Docker Usage
 
 ```
-docker run gardnera/tracepusher:v0.4.0 \
+docker run gardnera/tracepusher:v0.5.0 \
 -ep=http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
 -sen=service_name \
 -spn=span_name \
@@ -37,7 +37,12 @@ docker run gardnera/tracepusher:v0.4.0 \
 --dry-run=True|False
 --debug=True|False
 --time-shift=True|False
+--parent-span-id=<16 character hex id>
+--trace-id=<32 character hex id>
+--span-id=<16 character hex id>
 ```
+
+Use the final 3 optional parameters above when working with sub spans. See below for more information.
 
 ## Dry Run Mode
 Add `--dr=True`, `--dry-run=True` or `--dry=True` to run without actually pushing any data.
@@ -53,6 +58,7 @@ You may want to push timings for traces that have already occurred (eg. shell sc
 `--time-shift=True` means `start` and `end` times will be shifted back by whatever is specified as the `--duration`.
 
 ## Complex Tracing (Sub Span support)
+![subspan schematic](assets/subspan.schematic.excalidraw.png)
 ![complex trace](assets/complex-trace.png)
 
 > TLDR: Prefer to read code? See the [samples/script.sh](./samples/script.sh) for a working example.
@@ -84,8 +90,8 @@ As a trace, this would be represented as `1` parent span (that lasts for `5` sec
 In the default mode, tracepusher will auto-generate trace and span IDs but you can generate your own and pass them in. For example:
 
 ```
-# trace_id is 16 digits
-# span_id is 8
+# trace_id is 32 digits
+# span_id is 16
 trace_id=$(hexdump -vn16 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
 span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
 ```
