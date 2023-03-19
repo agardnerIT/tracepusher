@@ -21,7 +21,6 @@ do
   sleep 1
   time_end=$SECONDS
   duration=$(( $time_end - $time_start ))
-  counter=$(( $counter + 1 ))
   echo "loop time_start: ${time_start}. time_end: ${time_end}. duration: ${duration}"
 
   python3 tracepusher.py \
@@ -34,6 +33,9 @@ do
     --span-id=${sub_span_id} \
     --time-shift=True
   echo "pushing subspan: ${sub_span_id} with span name: subspan${counter}. trace id: ${trace_id} and parent span id: ${span_id} and time shifted"
+
+  counter=$(( $counter + 1 ))
+  
 done
 
 time_end=$SECONDS
