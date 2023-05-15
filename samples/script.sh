@@ -7,7 +7,7 @@ echo "trace_id: ${trace_id}"
 echo "span_id: ${span_id}"
 
 main_time_start=0
-echo "main time_start: ${time_start}"
+echo "main time_start: ${main_time_start}"
 
 counter=1
 limit=3
