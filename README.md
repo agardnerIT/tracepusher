@@ -114,7 +114,7 @@ python3 tracepusher.py \
 # Note: subspan time is tracked independently to "main" span time
 while [ $counter -lt $limit ]
 do
-  # Calculate uniquenique to this span
+  # Calculate unique ID for this span
   sub_span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
   sub_span_time_start=$SECONDS
 
