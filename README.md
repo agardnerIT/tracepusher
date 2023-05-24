@@ -234,6 +234,16 @@ Argument handling was entirely re-written for `v0.4.0` and `tracepusher` expects
 
 ----------------------
 
+# Building
+
+Run all build commands from the root directory:
+
+```
+docker build -t tracepusher:dev-ci -f ./docker/ci/Dockerfile .
+docker build -t tracepusher:dev -f ./docker/standard/Dockerfile .
+```
+----------------------
+
 # Contributing
 
 All contributions are most welcome! Create an issue or a PR and see your name here!

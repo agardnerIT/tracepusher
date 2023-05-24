@@ -1,8 +1,10 @@
 # Stage 1: Copy all files into the build-env container
 FROM python:3-slim AS build-env
-COPY . /app
-RUN pip install --no-cache-dir -r /app/requirements.txt
 WORKDIR /app
+COPY tracepusher.py /app
+COPY requirements.txt /app
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
 
 # Stage 2: Use Google distroless and only copy in the app files
 FROM gcr.io/distroless/python3
