@@ -1,0 +1,98 @@
+image:
+  name: gardnera/tracepusher:v0.5.0-ci
+
+# Set your OTEL collector endpoint address here...
+variables:
+  OTEL_COLLECTOR_ENDPOINT: "http://1.2.3.4:4318"
+
+stages:
+  - preparation
+  - build
+  - verify
+
+# Do not change the before_script or after_script sections
+default:
+  before_script:
+    - echo subspan_start_time=$(date +%s) >> /tmp/vars.env
+    - echo subspan_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom) >> /tmp/vars.env
+  after_script:
+    - source /tmp/vars.env . # reconsitute env vars from before_script
+    - subspan_end_time=$(date +%s)
+    - duration=$(( subspan_end_time - subspan_start_time ))
+    - python3 /app/tracepusher.py
+        --endpoint=$OTEL_COLLECTOR_ENDPOINT
+        --service-name=$CI_PROJECT_NAME
+        --span-name=$CI_JOB_NAME
+        --duration=$duration
+        --trace-id=$main_trace_id
+        --span-id=$subspan_id
+        --parent-span-id=$main_span_id
+        --time-shift=True
+
+# Do not change anything in generate-trace-id
+# This job should run as the FIRST job in your pipelien
+# This generates a main trace id, main span id and starts the main trace timer
+# These variables are stored in variables.env
+# so that other jobs can use these details
+generate-trace-id:
+  stage: preparation
+  before_script: []
+  after_script: []
+  script:
+    - echo "main_trace_id=$(hexdump -vn16 -e'4/4 "%08X" 1 "\n"' /dev/urandom)" >> variables.env
+    - echo "main_span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)" >> variables.env
+    - echo "main_trace_start_time=$(date +%s)" >> variables.env
+  artifacts:
+    reports:
+      dotenv: variables.env              # Use artifacts:reports:dotenv to expose the variables to other jobs
+
+# build-job is an example
+# of your actual work
+# This is the part you implement
+# Add as many jobs and stages as you like
+# The traces will be automatically generated for you
+build-job:
+  stage: build
+  script:
+    # START: Do your real work here
+    - echo "in build-job"
+    - sleep 2
+    # END: Do your real work here
+
+second-build-job:
+  stage: build
+  script:
+    # START: Do your real work here
+    - echo "in second-build-job"
+    - sleep 1
+    # END: Do your real work here
+
+verify-build:
+    stage: verify
+    script:
+      # START: Do your real work here
+      - echo "in verify-build"
+      - sleep 3
+      # END: Do your real work here
+
+# Do not change anything
+# push-main-trace runs in the .post stage
+# ie. after everything else
+# This utilises tracepusher for the final time
+# To push the main trace
+# After push-main-trace occurs, the backend system
+# has all spans and subspans necessary to build and display the trace
+push-main-trace:
+  stage: .post
+  after_script: []
+  script:
+    - main_trace_end_time=$(date +%s)
+    - duration=$(( main_trace_end_time - main_trace_start_time ))
+    - python3 /app/tracepusher.py
+        --endpoint=$OTEL_COLLECTOR_ENDPOINT
+        --service-name=$CI_PROJECT_NAME
+        --span-name=$CI_PROJECT_NAME-$CI_PIPELINE_ID
+        --duration=$duration
+        --trace-id=$main_trace_id
+        --span-id=$main_span_id
+        --time-shift=True
