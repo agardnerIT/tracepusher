@@ -2,7 +2,7 @@
 
 ## Video Overview
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/zZDFQNHepyI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![Tracing Gitlab Pipelines with OpenTelemetry](https://img.youtube.com/vi/zZDFQNHepyI/0.jpg)](https://www.youtube.com/watch?v=zZDFQNHepyI)
 
 ## Code
 
