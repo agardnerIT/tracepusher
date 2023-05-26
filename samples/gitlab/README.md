@@ -2,7 +2,7 @@
 
 ## Video Overview
 
-TODO
+TODO: Coming soon on https://youtube.com/@agardnerit
 
 ## Code
 
