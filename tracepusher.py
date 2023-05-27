@@ -14,6 +14,49 @@ import argparse
 # python tracepusher.py -ep=http(s)://localhost:4318 -sen=serviceNameA -spn=spanX -dur=2
 #############################################################################
 
+# Returns attributes list:
+# From spec: https://opentelemetry.io/docs/concepts/signals/traces/#attributes
+# Syntax: {
+#           "key": "my.scope.attribute",
+#           "value": {
+#             "stringValue": "some scope attribute"
+#           }
+#         }
+# Ref: https://github.com/open-telemetry/opentelemetry-proto/blob/9876ebfc5bcf629d1438d1cf1ee8a1a4ec21676c/examples/trace.json#L20-L56
+# Values must be a non-null string, boolean, floating point value, integer, or an array of these values
+# [{"key": "foo", "value": "bar"}, {"key": "foo2": "value": "bar2"} ...]
+def get_span_attributes_list(args):
+
+    arg_list = []
+
+    if args == None or len(args) < 1:
+        return arg_list
+
+    for item in args:
+        # How many = are in the item?
+        # 0 = invalid item. Ignore
+        # 1 = key=value (tracepusher assumes type=stringValue)
+        # 2 = key=value=type (user is explicitly telling us the type. tracepusher uses it)
+        # >3 = invalid item. tracepusher does not support span keys and value containing equals. Ignore.
+        number_of_equals = item.count("=")
+        if number_of_equals == 0 or number_of_equals > 2: continue
+
+        key = ""
+        value = ""
+        type = "stringValue"
+
+        if number_of_equals == 1:
+            key, value = item.split("=", maxsplit=1)
+            # User did not pass a type. Assuming type == 'stringValue'
+        
+        if number_of_equals == 2:
+            key, value, type = item.split('=',maxsplit=2)
+            # User passed an explicit type. Tracepusher will use it.
+
+        arg_list.append({"key": key, "value": { type: value}})
+    
+    return arg_list
+
 parser = argparse.ArgumentParser()
 
 # Notes:
@@ -33,6 +76,7 @@ parser.add_argument('-ts', '--time-shift', required=False, default="False")
 parser.add_argument('-psid','--parent-span-id', required=False, default="")
 parser.add_argument('-tid', '--trace-id', required=False, default="")
 parser.add_argument('-sid', '--span-id', required=False, default="")
+parser.add_argument('-spnattrs', '--span-attributes', required=False, nargs='*')
 
 
 args = parser.parse_args()
@@ -47,6 +91,8 @@ time_shift = args.time_shift
 parent_span_id = args.parent_span_id
 trace_id = args.trace_id
 span_id = args.span_id
+
+span_attributes_list = get_span_attributes_list(args.span_attributes)
 
 # Debug mode required?
 DEBUG_MODE = False
@@ -142,6 +188,7 @@ trace = {
              "start_time_unix_nano": time_now,
              "end_time_unix_nano": time_future,
              "droppedAttributesCount": 0,
+             "attributes": span_attributes_list,
              "events": [],
              "droppedEventsCount": 0,
              "status": {
