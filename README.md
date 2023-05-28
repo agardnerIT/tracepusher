@@ -242,6 +242,7 @@ Run all build commands from the root directory:
 docker buildx build --platform linux/arm64,linux/amd64 --push -t tracepusher:dev-ci ./docker/ci/Dockerfile .
 docker buildx build --platform linux/arm64,linux/amd64 --push -t tracepusher:dev -f ./docker/standard/Dockerfile .
 ```
+
 ----------------------
 
 # Contributing
