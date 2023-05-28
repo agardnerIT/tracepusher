@@ -5,6 +5,16 @@ Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 ![architecture](assets/architecture.png)
 ![trace](assets/trace.png)
 
+# Uses
+
+- [Trace CICD Pipelines with OpenTelemetry](samples/gitlab/README.md)
+- [Trace shell scripts with OpenTelemetry](samples/script.sh)
+- Trace anything with OpenTelemetry!
+
+# Try In Browser
+- [tracepusher with open source software (Jaeger)](https://killercoda.com/agardnerit/scenario/tracepusherOSS)
+- [tracepusher with Dynatrace](https://killercoda.com/agardnerit/scenario/tracepusherDT)
+
 # Requirements and Prequisites
 - A running OpenTelemetry collector (see below)
 - Requires `requests` module (`pip install -r requirements.txt`)
