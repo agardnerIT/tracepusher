@@ -26,46 +26,46 @@ Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
 ```
 python tracepusher.py \
---endpoint=http(s)://OTEL-COLLECTOR-ENDPOINT:4318
---service-name=service_name \
---span-name=spanA \
---duration=2
+--endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318
+--service-name service_name \
+--span-name spanA \
+--duration 2
 ```
 
 ## Docker Usage
 
 ```
 docker run gardnera/tracepusher:v0.5.0 \
--ep=http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
--sen=service_name \
--spn=span_name \
--dur=SPAN_TIME_IN_SECONDS
+-ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
+-sen service_name \
+-spn span_name \
+-dur SPAN_TIME_IN_SECONDS
 ```
 
 ### Optional Parameters:
 ```
---dry-run=True|False
---debug=True|False
---time-shift=True|False
---parent-span-id=<16 character hex id>
---trace-id=<32 character hex id>
---span-id=<16 character hex id>
+--dry-run True|False
+--debug True|False
+--time-shift True|False
+--parent-span-id <16 character hex id>
+--trace-id <32 character hex id>
+--span-id <16 character hex id>
 ```
 
 Use the final 3 optional parameters above when working with sub spans. See below for more information.
 
 ## Dry Run Mode
-Add `--dr=True`, `--dry-run=True` or `--dry=True` to run without actually pushing any data.
+Add `--dr True`, `--dry-run True` or `--dry True` to run without actually pushing any data.
 
 ## Debug Mode
-Add `-x=True` or `--debug=True` for extra output
+Add `-x True` or `--debug True` for extra output
 
 ## Time Shifting
 In "default mode" tracepusher starts a trace `now` and finishes it `SPAN_TIME_IN_SECONDS` in the future.
 
 You may want to push timings for traces that have already occurred (eg. shell scripts). See https://github.com/agardnerIT/tracepusher/issues/4.
 
-`--time-shift=True` means `start` and `end` times will be shifted back by whatever is specified as the `--duration`.
+`--time-shift True` means `start` and `end` times will be shifted back by whatever is specified as the `--duration`.
 
 ## Complex Tracing (Sub Span support)
 ![subspan schematic](assets/subspan.schematic.excalidraw.png)
@@ -110,13 +110,13 @@ The parent span would look like the following. Notice the `--time-shift=True` pa
 ### Parent Span Example
 ```
 python3 tracepusher.py \
-    --endpoint=http://localhost:4318 \
-    --service-name="serviceA" \
-    --span-name="main_span" \
-    --duration=${duration} \
-    --trace-id=${trace_id} \
-    --span-id=${span_id} \
-    --time-shift=True
+    --endpoint http://localhost:4318 \
+    --service-name "serviceA" \
+    --span-name "main_span" \
+    --duration ${duration} \
+    --trace-id ${trace_id} \
+    --span-id ${span_id} \
+    --time-shift True
 ```
 
 ### Sub Span Example
@@ -136,14 +136,14 @@ do
   counter=$(( $counter + 1 ))
 
   python3 tracepusher.py \
-    --endpoint=http://localhost:4318 \
-    --service-name=serviceA \
-    --span-name="subspan${counter}" \
-    --duration=${duration} \
-    --trace-id=${trace_id} \
-    --parent-span-id=${span_id} \
-    --span-id=${subspan_id} \
-    --time-shift=True
+    --endpoint http://localhost:4318 \
+    --service-name serviceA \
+    --span-name "subspan${counter}" \
+    --duration ${duration} \
+    --trace-id ${trace_id} \
+    --parent-span-id ${span_id} \
+    --span-id ${subspan_id} \
+    --time-shift True
 done
 ```
 
@@ -257,7 +257,12 @@ docker buildx build --platform linux/arm64,linux/amd64 --push -t tracepusher:dev
 
 # Contributing
 
-All contributions are most welcome! Create an issue or a PR and see your name here!
+All contributions are most welcome!
+
+Get involved:
+- Tackle a [good first issue](https://github.com/agardnerIT/tracepusher/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
+- Create an issue to suggest something new
+- File a PR to fix something
 
 <a href="https://github.com/agardnerit/tracepusher/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=agardnerit/tracepusher" />
