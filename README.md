@@ -50,9 +50,12 @@ docker run gardnera/tracepusher:v0.5.0 \
 --parent-span-id <16 character hex id>
 --trace-id <32 character hex id>
 --span-id <16 character hex id>
+--span-attributes key=value [key2=value2...]
 ```
 
-Use the final 3 optional parameters above when working with sub spans. See below for more information.
+Use `parent-span-id` `trace-id` and `span-id` optional parameters when working with sub spans. See below for more information.
+
+Use `span-attributes` to add `key=value` pairs of [span attributes](https://opentelemetry.io/docs/instrumentation/python/manual/#add-attributes-to-a-span) to your span. See below for more information.
 
 ## Dry Run Mode
 Add `--dr True`, `--dry-run True` or `--dry True` to run without actually pushing any data.
@@ -145,6 +148,43 @@ do
     --span-id ${subspan_id} \
     --time-shift True
 done
+```
+
+## Span Attributes
+
+The optional `-spnattrs` or equivalent long form version: `--span-attributes` exists to add span attributes to the spans that tracepusher creates.
+
+Add as many attributes as you like.
+
+### Formatting Span Attributes
+
+Tracepusher will accept two possible inputs:
+
+- `--span-attributes foo=bar`
+- `--span-attributes foo=bar=<TYPE>`
+
+In the first, the value is assumed to be of type `stringValue`.
+
+In the second, **you** specify the value type. Possible types are: `stringValue`, `boolValue`, `intValue`, `doubleValue`, `arrayValue`, `kvlistValue` or `bytesValue`.
+
+Separate each attribute with a space.
+
+```
+python tracepusher.py \
+--endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318
+--service-name service_name \
+--span-name spanA \
+--duration 2 \
+--span-attributes foo=bar foo2=23=intValue
+```
+
+```
+docker run gardnera/tracepusher:v0.5.0 \
+-ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
+-sen service_name \
+-spn span_name \
+-dur SPAN_TIME_IN_SECONDS \
+--spnattrs foo=bar foo2=bar2=stringValue
 ```
 
 ## Spin up OpenTelemetry Collector
