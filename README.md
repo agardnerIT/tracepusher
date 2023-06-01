@@ -165,7 +165,7 @@ Tracepusher will accept two possible inputs:
 
 In the first, the value is assumed to be of type `stringValue`.
 
-In the second, **you** specify the value type. Possible types are: `stringValue`... TODO when [this is answered](https://cloud-native.slack.com/archives/CJFCJHG4Q/p1685167286427639).
+In the second, **you** specify the value type. Possible types are: `stringValue`, `boolValue`, `intValue`, `doubleValue`, `arrayValue`, `kvlistValue` or `bytesValue`.
 
 Separate each attribute with a space.
 
@@ -175,7 +175,7 @@ python tracepusher.py \
 --service-name service_name \
 --span-name spanA \
 --duration 2 \
---span-attributes foo=bar foo2=bar2=stringValue
+--span-attributes foo=bar foo2=23=intValue
 ```
 
 ```

@@ -24,7 +24,7 @@ import argparse
 #         }
 # Ref: https://github.com/open-telemetry/opentelemetry-proto/blob/9876ebfc5bcf629d1438d1cf1ee8a1a4ec21676c/examples/trace.json#L20-L56
 # Values must be a non-null string, boolean, floating point value, integer, or an array of these values
-# [{"key": "foo", "value": "bar"}, {"key": "foo2": "value": "bar2"} ...]
+# stringValue, boolValue, intValue, doubleValue, arrayValue, kvlistValue, bytesValue are all valid
 def get_span_attributes_list(args):
 
     arg_list = []
