@@ -5,6 +5,16 @@ Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 ![architecture](assets/architecture.png)
 ![trace](assets/trace.png)
 
+# Uses
+
+- [Trace CICD Pipelines with OpenTelemetry](samples/gitlab/README.md)
+- [Trace shell scripts with OpenTelemetry](samples/script.sh)
+- Trace anything with OpenTelemetry!
+
+# Try In Browser
+- [tracepusher with open source software (Jaeger)](https://killercoda.com/agardnerit/scenario/tracepusherOSS)
+- [tracepusher with Dynatrace](https://killercoda.com/agardnerit/scenario/tracepusherDT)
+
 # Requirements and Prequisites
 - A running OpenTelemetry collector (see below)
 - Requires `requests` module (`pip install -r requirements.txt`)
@@ -48,7 +58,7 @@ Use `parent-span-id` `trace-id` and `span-id` optional parameters when working w
 Use `span-attributes` to add `key=value` pairs of [span attributes](https://opentelemetry.io/docs/instrumentation/python/manual/#add-attributes-to-a-span) to your span. See below for more information.
 
 ## Dry Run Mode
-Add `--dr=True`, `--dry-run True` or `--dry True` to run without actually pushing any data.
+Add `--dr True`, `--dry-run True` or `--dry True` to run without actually pushing any data.
 
 ## Debug Mode
 Add `-x True` or `--debug True` for extra output
@@ -287,7 +297,12 @@ docker buildx build --platform linux/arm64,linux/amd64 --push -t tracepusher:dev
 
 # Contributing
 
-All contributions are most welcome! Create an issue or a PR and see your name here!
+All contributions are most welcome!
+
+Get involved:
+- Tackle a [good first issue](https://github.com/agardnerIT/tracepusher/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
+- Create an issue to suggest something new
+- File a PR to fix something
 
 <a href="https://github.com/agardnerit/tracepusher/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=agardnerit/tracepusher" />
