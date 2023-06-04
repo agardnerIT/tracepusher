@@ -7,3 +7,4 @@ nav:
     - CI: usage/ci.md
     - Reference Pages: reference/index.md
     - GitHub: https://github.com/agardnerit/tracepusher
+theme: readthedocs
