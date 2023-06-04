@@ -266,27 +266,19 @@ Then run tracepusher:
 python tracepusher.py http://localhost:4318 tracepusher my-span 2
 ```
 
-----------------------
+# Adopters
+
+Do you use tracepusher? Thanks and we'd love to know!
+
+Submit a PR and add your details to [ADOPTERS.md](ADOPTERS.md)
 
 # FAQs
 
-## Why Does This Exist?
-Why, when [tracegen](https://www.jaegertracing.io/docs/1.42/tools/) and the replacement [telemetrygen](https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/9597) exist, does this exist?
-
-This tool does not replace or supercede those tools in any way. For lots of usecases and people, those tools will be better.
-
-However, they hide the inner-workings (the *how*). For someone getting started or wanting to truly understand what is happening, there is "too much magic". Stuff "just works" whereas tracepusher is more explicit - and thus (I believe) easier to see how the pieces fit together.
-
-The trace data that tracepusher generates is also customisable whereas "you get what you get" with `tracegen / telemetrygen`.
+See [FAQ](https://agardnerit.github.io/tracepusher/faq).
 
 # Breaking Changes
 
-## v0.3.0 to v0.4.0
-Argument handling was entirely re-written for `v0.4.0` and `tracepusher` expects different arguments for [v0.3.0](https://github.com/agardnerIT/tracepusher/releases/tag/0.3.0) and [v0.4.0](https://github.com/agardnerIT/tracepusher/releases/tag/0.4.0).
-
-[Here is the readme for v0.3.0](https://github.com/agardnerIT/tracepusher/tree/88e6479213a952eed7985d28b1ef49a4396fe992).
-
-----------------------
+See [Breaking changes](https://agardnerit.github.io/tracepusher/breaking-changes)
 
 # Building
 
