@@ -1,18 +1,39 @@
 ## Span Attribute Types
 
-Span attributes can be added in two ways.
+The optional `-spnattrs` or equivalent long form version: `--span-attributes` exists to add span attributes to the spans that tracepusher creates.
 
-`--span-attributes key=value` assumes `value` is of type `string`.
+Add as many attributes as you like.
 
-For example, `--span-attributes foo=bar`
+### Formatting Span Attributes
 
-Alternatively, you can explicitely specify the `value` type:
-`--span-attributes key=value`.
+Tracepusher will accept two possible inputs:
 
-For example, `--span-attributes userID=123=intValue`
+- `--span-attributes foo=bar`
+- `--span-attributes foo=bar=<TYPE>`
 
+In the first, the value is assumed to be of type `stringValue`.
 
-The short form `--spnattrs foo=bar` is also valid.
+In the second, **you** specify the value type. Possible types are: `stringValue`, `boolValue`, `intValue`, `doubleValue`, `arrayValue`, `kvlistValue` or `bytesValue`.
+
+Separate each attribute with a space.
+
+```
+python tracepusher.py \
+--endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318
+--service-name service_name \
+--span-name spanA \
+--duration 2 \
+--span-attributes foo=bar foo2=23=intValue
+```
+
+```
+docker run gardnera/tracepusher:v0.6.0 \
+-ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
+-sen service_name \
+-spn span_name \
+-dur SPAN_TIME_IN_SECONDS \
+--spnattrs foo=bar foo2=bar2=stringValue
+```
 
 ### Valid Types
 

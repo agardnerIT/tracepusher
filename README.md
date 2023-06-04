@@ -156,115 +156,11 @@ done
 
 > Only supported with `v0.6.0` and above.
 
-The optional `-spnattrs` or equivalent long form version: `--span-attributes` exists to add span attributes to the spans that tracepusher creates.
-
-Add as many attributes as you like.
-
-### Formatting Span Attributes
-
-Tracepusher will accept two possible inputs:
-
-- `--span-attributes foo=bar`
-- `--span-attributes foo=bar=<TYPE>`
-
-In the first, the value is assumed to be of type `stringValue`.
-
-In the second, **you** specify the value type. Possible types are: `stringValue`, `boolValue`, `intValue`, `doubleValue`, `arrayValue`, `kvlistValue` or `bytesValue`.
-
-Separate each attribute with a space.
-
-```
-python tracepusher.py \
---endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318
---service-name service_name \
---span-name spanA \
---duration 2 \
---span-attributes foo=bar foo2=23=intValue
-```
-
-```
-docker run gardnera/tracepusher:v0.6.0 \
--ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
--sen service_name \
--spn span_name \
--dur SPAN_TIME_IN_SECONDS \
---spnattrs foo=bar foo2=bar2=stringValue
-```
+See [span attribute types](https://agardnerit.github.io/tracepusher/reference/span-attribute-types/)
 
 ## Spin up OpenTelemetry Collector
 
-## Download Collector
-The Python script will generate and push a trace to an OpenTelemetry collector. So of course, you need one available.
-
-If you have a collector already available, go on ahead to run the tool. If you **don't** have one already available, follow these steps.
-
-Download and extract the collector binary for your platform from [here](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.78.0).
-
-For example, for windows: `https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.78.0/otelcol-contrib_0.78.0_windows_amd64.tar.gz`
-
-Unzip and extract so you have the binary (eg. `otelcol.exe`)
-
-## Create config.yaml
-The OpenTelemetry collector needs a config file - this is how you decide which trace backend the traces will go to.
-
-Save this file alongside `otelcol.exe` as `config.yaml`.
-
-You will need to modify the `otlphttp` code for your backend. The example given is for Dynatrace trace ingest.
-For Dynatrace, the API token needs `Ingest OpenTelemetry traces` permissions.
-
-```
-receivers:
-  otlp:
-    protocols:
-      grpc:
-      http:
-
-processors:
-  batch:
-    send_batch_max_size: 1000
-    timeout: 30s
-    send_batch_size : 800
-
-  memory_limiter:
-    check_interval: 1s
-    limit_percentage: 70
-    spike_limit_percentage: 30
-
-exporters:
-  logging:
-    verbosity: detailed
-
-  otlphttp:
-    endpoint: https://abc12345.live.dynatrace.com/api/v2/otlp
-    headers:
-      Authorization: "Api-Token dt0c01.sample.secret"
-
-service:
-  extensions: []
-  pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [otlphttp,logging]
-    metrics:
-      receivers: [otlp]
-      processors: [memory_limiter,batch]
-      exporters: [otlphttp]
-```
-
-## Start The Collector
-
-Open a command / terminal window and run:
-
-```
-otelcol.exe --config config.yaml
-```
-
-Then run tracepusher:
-
-```
-python tracepusher.py http://localhost:4318 tracepusher my-span 2
-```
+See [OpenTelemetry Collector configuration](https://agardnerit.github.io/tracepusher/reference/otel-col)
 
 # Adopters
 
