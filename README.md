@@ -18,7 +18,7 @@ Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
 # Try In Browser
 
-See [try tracepusher in-browser without installation]().
+See [try tracepusher in-browser without installation](https://agardnerit.github.io/tracepusher/try/).
 
 ## Python3 Usage
 

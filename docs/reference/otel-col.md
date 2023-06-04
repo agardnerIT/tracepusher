@@ -1,3 +1,9 @@
+This page shows sample configuration and instructions for creating an OpenTelemetry Collector.
+
+Specifically, the `config.yaml` shows how to send traces to Dynatrace as a backend.
+
+If you need Dynatrace tenant, [click here to signup for a free trial](https://dynatrace.com/trial).
+
 ## Download Collector
 The Python script will generate and push a trace to an OpenTelemetry collector. So of course, you need one available.
 
