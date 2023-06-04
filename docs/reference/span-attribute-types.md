@@ -32,7 +32,7 @@ docker run gardnera/tracepusher:v0.6.0 \
 -sen service_name \
 -spn span_name \
 -dur SPAN_TIME_IN_SECONDS \
---spnattrs foo=bar foo2=bar2=stringValue
+-spnattrs foo=bar foo2=bar2=stringValue
 ```
 
 ### Valid Types
