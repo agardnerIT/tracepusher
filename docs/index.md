@@ -33,6 +33,7 @@ See the following pages for advanced usage and reference information for the fla
 - [Docker usage](usage/docker.md)
 - [Python usage](usage/python.md)
 - [CI system usage](usage/ci.md)
+- [Complex (Multi Span) Traces](reference/multi-span-traces.md)
 - [Span time shifting](reference/time-shifting.md)
 - [Span attributes and span attribute types](reference/span-attribute-types.md)
 - [tracepusher flag reference pages](reference/index.md)
