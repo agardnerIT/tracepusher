@@ -1,5 +1,7 @@
 # OpenTelemetry tracepusher
 
+Trace anything with OpenTelemetry!
+
 Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
 ![architecture](assets/architecture.png)
