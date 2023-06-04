@@ -1,0 +1,9 @@
+site_name: OpenTelemetry tracepusher
+nav:
+    - Home: index.md
+    - Try tracepusher: try.md
+    - Python: usage/python.md
+    - Docker: usage/docker.md
+    - CI: usage/ci.md
+    - Reference Pages: reference/index.md
+    - GitHub: https://github.com/agardnerit/tracepusher
