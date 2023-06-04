@@ -25,3 +25,5 @@ docker run gardnera/tracepusher:v0.6.0 \
 ```
 
 For span atttribute types, see [Span Attribute Types](../reference/span-attribute-types.md).
+
+For multi-span traces, see [multi span traces](../reference/multi-span-traces.md)
