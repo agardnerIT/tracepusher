@@ -9,4 +9,16 @@ For example, `--span-attrs foo=bar`
 Alternatively, you can explicitely specify the `value` type:
 `--spann-attrs key=value`.
 
-For example, `-span-attrs userID=123=
+For example, `-span-attrs userID=123=intValue`
+
+### Valid Types
+
+The following are all valid:
+
+- `stringValue`
+- `boolValue`
+- `intValue`
+- `doubleValue`
+- `arrayValue`
+- `kvlistValue`
+- `bytesValue`
