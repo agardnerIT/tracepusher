@@ -1,5 +1,5 @@
-![subspan schematic](assets/subspan.schematic.excalidraw.png)
-![complex trace](assets/complex-trace.png)
+![subspan schematic](../assets/subspan.schematic.excalidraw.png)
+![complex trace](../assets/complex-trace.png)
 
 > TLDR: Prefer to read code? See the [GitLab sample pipeline](https://github.com/agardnerIT/tracepusher/blob/main/samples/script.sh) for a working example.
 
@@ -36,6 +36,8 @@ trace_id=$(hexdump -vn16 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
 span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
 ```
 The parent span would look like the following. Notice the `--time-shift=True` parameter is set. If this **was not** set, the timings would not make sense.
+
+For more information, see [time shifting](time-shifting.md)
 
 ### Parent Span Example
 ```
