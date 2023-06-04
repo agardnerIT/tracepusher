@@ -2,6 +2,7 @@
 
 ### Advances Usecases
 - [Complex (Multi Span) Traces](multi-span-traces.md)
+- [OpenTelemetry Collector Configuration](otel-col.md)
 
 ### Flags Reference
 - [Debug Mode Flag](debug-mode.md)
