@@ -8,4 +8,6 @@ nav:
     - Usage > CI: usage/ci.md
     - Multi Span Traces: reference/index.md
     - Reference Pages: reference/index.md
+    - FAQ: faq.md
+    - Adopters: adopters.md
     - tracepusher on GitHub: https://github.com/agardnerit/tracepusher
