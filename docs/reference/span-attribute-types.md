@@ -2,14 +2,17 @@
 
 Span attributes can be added in two ways.
 
-`--span-attrs key=value` assumes `value` is of type `string`.
+`--span-attributes key=value` assumes `value` is of type `string`.
 
-For example, `--span-attrs foo=bar`
+For example, `--span-attributes foo=bar`
 
 Alternatively, you can explicitely specify the `value` type:
-`--span-attrs key=value`.
+`--span-attributes key=value`.
 
-For example, `--span-attrs userID=123=intValue`
+For example, `--span-attributes userID=123=intValue`
+
+
+The short form `--spnattrs foo=bar` is also valid.
 
 ### Valid Types
 
