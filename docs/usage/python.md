@@ -25,3 +25,7 @@ python tracepusher.py \
 --span-id <16 character hex id>
 --span-attributes key=value [key2=value2...]
 ```
+
+For information on span atttributes and span attribute types, see [Span Attribute Types](../reference/span-attribute-types.md).
+
+For multi-span traces, see [multi span traces](../reference/multi-span-traces.md)
