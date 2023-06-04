@@ -3,9 +3,9 @@ nav:
     - Home: index.md
     - Try tracepusher: try.md
     - Usage: usage/index.md
-      Python: usage/python.md
-      Docker: usage/docker.md
-      CI: usage/ci.md
+    - Usage > Python: usage/python.md
+    - Usage > Docker: usage/docker.md
+    - Usage > CI: usage/ci.md
     - Multi Span Traces: reference/index.md
     - Reference Pages: reference/index.md
     - tracepusher on GitHub: https://github.com/agardnerit/tracepusher
