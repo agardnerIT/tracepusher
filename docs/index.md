@@ -10,6 +10,7 @@ Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
 - [Trace CICD Pipelines with OpenTelemetry](https://github.com/agardnerIT/tracepusher/blob/main/samples/gitlab/README.md)
 - [Trace shell scripts with OpenTelemetry](https://github.com/agardnerIT/tracepusher/blob/main/samples/script.sh)
+- [Use tracepusher in a CICD system](usage/ci.md)
 - Trace anything with OpenTelemetry
 
 ## Try tracepusher
