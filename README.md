@@ -35,7 +35,7 @@ python tracepusher.py \
 ## Docker Usage
 
 ```
-docker run gardnera/tracepusher:v0.5.0 \
+docker run gardnera/tracepusher:v0.6.0 \
 -ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
 -sen service_name \
 -spn span_name \
@@ -152,6 +152,8 @@ done
 
 ## Span Attributes
 
+> Only supported with `v0.6.0` and above.
+
 The optional `-spnattrs` or equivalent long form version: `--span-attributes` exists to add span attributes to the spans that tracepusher creates.
 
 Add as many attributes as you like.
@@ -179,7 +181,7 @@ python tracepusher.py \
 ```
 
 ```
-docker run gardnera/tracepusher:v0.5.0 \
+docker run gardnera/tracepusher:v0.6.0 \
 -ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
 -sen service_name \
 -spn span_name \
@@ -194,9 +196,9 @@ The Python script will generate and push a trace to an OpenTelemetry collector. 
 
 If you have a collector already available, go on ahead to run the tool. If you **don't** have one already available, follow these steps.
 
-Download and extract the collector binary for your platform from [here](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.71.0).
+Download and extract the collector binary for your platform from [here](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.78.0).
 
-For example, for windows: `https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.71.0/otelcol-contrib_0.71.0_windows_amd64.tar.gz`
+For example, for windows: `https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.78.0/otelcol-contrib_0.78.0_windows_amd64.tar.gz`
 
 Unzip and extract so you have the binary (eg. `otelcol.exe`)
 
