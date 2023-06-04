@@ -5,5 +5,6 @@ nav:
     - Python: usage/python.md
     - Docker: usage/docker.md
     - CI: usage/ci.md
+    - Multi Span Traces: reference/index.md
     - Reference Pages: reference/index.md
-    - GitHub: https://github.com/agardnerit/tracepusher
+    - tracepusher on GitHub: https://github.com/agardnerit/tracepusher
