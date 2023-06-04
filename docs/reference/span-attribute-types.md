@@ -7,9 +7,9 @@ Span attributes can be added in two ways.
 For example, `--span-attrs foo=bar`
 
 Alternatively, you can explicitely specify the `value` type:
-`--spann-attrs key=value`.
+`--span-attrs key=value`.
 
-For example, `-span-attrs userID=123=intValue`
+For example, `--span-attrs userID=123=intValue`
 
 ### Valid Types
 

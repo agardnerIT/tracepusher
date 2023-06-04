@@ -22,10 +22,10 @@ See [try tracepusher](try.md)
 
 ```
 docker run gardnera/tracepusher:v0.6.0 \
--ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
--sen service_name \
--spn span_name \
--dur SPAN_TIME_IN_SECONDS
+--endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
+--service-name service_name \
+--span-name span_name \
+--duration SPAN_TIME_IN_SECONDS
 ```
 
 ## Advanced Usage

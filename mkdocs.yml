@@ -2,9 +2,10 @@ site_name: OpenTelemetry tracepusher
 nav:
     - Home: index.md
     - Try tracepusher: try.md
-    - Python: usage/python.md
-    - Docker: usage/docker.md
-    - CI: usage/ci.md
+    - Usage: usage/index.md
+      Python: usage/python.md
+      Docker: usage/docker.md
+      CI: usage/ci.md
     - Multi Span Traces: reference/index.md
     - Reference Pages: reference/index.md
     - tracepusher on GitHub: https://github.com/agardnerit/tracepusher
