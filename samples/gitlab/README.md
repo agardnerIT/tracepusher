@@ -1,5 +1,7 @@
 # Tracing Gitlab Pipelines with OpenTelemetry
 
+![tracepusher generating an opentelemetry trace from a gitlab pipeline](../../assets/tracepusher-gitlab.jpg)
+
 ## Video Overview
 
 Click the image to view on YouTube.
