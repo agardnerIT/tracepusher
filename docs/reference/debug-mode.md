@@ -1,2 +1,3 @@
 ## Debug Mode
-Add `-x True` or `--debug True` for extra output
+
+Add `-x true` or `--debug true` for extra output
