@@ -8,7 +8,7 @@
 
 ```
 python tracepusher.py \
---endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318
+--endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
 --service-name service_name \
 --span-name spanA \
 --duration 2
