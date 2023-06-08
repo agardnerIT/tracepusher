@@ -35,11 +35,13 @@ In the default mode, tracepusher will auto-generate trace and span IDs but you c
 trace_id=$(hexdump -vn16 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
 span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
 ```
-The parent span would look like the following. Notice the `--time-shift=True` parameter is set. If this **was not** set, the timings would not make sense.
+
+The parent span would look like the following. Notice the `--time-shift=true` parameter is set. If this **was not** set, the timings would not make sense.
 
 For more information, see [time shifting](time-shifting.md)
 
 ### Parent Span Example
+
 ```
 python3 tracepusher.py \
     --endpoint http://localhost:4318 \
@@ -52,6 +54,7 @@ python3 tracepusher.py \
 ```
 
 ### Sub Span Example
+
 ```
 # Note: subspan time is tracked independently to "main" span time
 while [ $counter -lt $limit ]
@@ -62,7 +65,7 @@ do
 
   # Do real work here...
   sleep 1
-  
+
   subspan_time_end=$SECONDS
   duration=$$(( $time_end - $time_start ))
   counter=$(( $counter + 1 ))
