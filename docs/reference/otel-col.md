@@ -5,6 +5,7 @@ Specifically, the `config.yaml` shows how to send traces to Dynatrace as a backe
 If you need Dynatrace tenant, [click here to signup for a free trial](https://dynatrace.com/trial).
 
 ## Download Collector
+
 The Python script will generate and push a trace to an OpenTelemetry collector. So of course, you need one available.
 
 If you have a collector already available, go on ahead to run the tool. If you **don't** have one already available, follow these steps.
@@ -16,6 +17,7 @@ For example, for windows: `https://github.com/open-telemetry/opentelemetry-colle
 Unzip and extract so you have the binary (eg. `otelcol.exe`)
 
 ## Create config.yaml
+
 The OpenTelemetry collector needs a config file - this is how you decide which trace backend the traces will go to.
 
 Save this file alongside `otelcol.exe` as `config.yaml`.
@@ -74,5 +76,5 @@ otelcol.exe --config config.yaml
 Then run tracepusher:
 
 ```
-python tracepusher.py http://localhost:4318 tracepusher my-span 2
+python tracepusher.py --endpoint http://localhost:4318 --service-name tracepusher --span-name my-span --duration 2
 ```
