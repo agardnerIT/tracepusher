@@ -32,8 +32,8 @@ In the default mode, tracepusher will auto-generate trace and span IDs but you c
 ```
 # trace_id is 32 digits
 # span_id is 16
-trace_id=$(hexdump -vn16 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
-span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
+trace_id=$(openssl rand -hex 16)
+span_id=$(openssl rand -hex 8)
 ```
 
 The parent span would look like the following. Notice the `--time-shift=true` parameter is set. If this **was not** set, the timings would not make sense.
@@ -60,7 +60,7 @@ python3 tracepusher.py \
 while [ $counter -lt $limit ]
 do
   # Calculate unique ID for this span
-  sub_span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
+  sub_span_id=$(openssl rand -hex 8)
   sub_span_time_start=$SECONDS
 
   # Do real work here...
