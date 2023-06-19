@@ -1,7 +1,7 @@
 #!/bin/bash
 
-trace_id=$(hexdump -vn16 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
-span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
+trace_id=$(openssl rand -hex 16)
+span_id=$(openssl rand -hex 8)
 
 echo "trace_id: ${trace_id}"
 echo "span_id: ${span_id}"
@@ -15,7 +15,7 @@ limit=3
 while [ $counter -le $limit ]
 do
   # This is unique to this span
-  sub_span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
+  sub_span_id=$(openssl rand -hex 8)
   time_start=$SECONDS
   echo "loop: ${counter}"
   sleep 1
@@ -35,7 +35,7 @@ do
   echo "pushing subspan: ${sub_span_id} with span name: subspan${counter}. trace id: ${trace_id} and parent span id: ${span_id} and time shifted"
 
   counter=$(( $counter + 1 ))
-  
+
 done
 
 time_end=$SECONDS
