@@ -14,7 +14,7 @@ stages:
 default:
   before_script:
     - echo subspan_start_time=$(date +%s) >> /tmp/vars.env
-    - echo subspan_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom) >> /tmp/vars.env
+    - echo subspan_id=$(openssl rand -hex 8) >> /tmp/vars.env
   after_script:
     - source /tmp/vars.env . # reconsitute env vars from before_script
     - subspan_end_time=$(date +%s)
@@ -39,8 +39,8 @@ generate-trace-id:
   before_script: []
   after_script: []
   script:
-    - echo "main_trace_id=$(hexdump -vn16 -e'4/4 "%08X" 1 "\n"' /dev/urandom)" >> variables.env
-    - echo "main_span_id=$(hexdump -vn8 -e'4/4 "%08X" 1 "\n"' /dev/urandom)" >> variables.env
+    - echo "main_trace_id=$(openssl rand -hex 16)" >> variables.env
+    - echo "main_span_id=$(openssl rand -hex 8)" >> variables.env
     - echo "main_trace_start_time=$(date +%s)" >> variables.env
   artifacts:
     reports:

@@ -2,7 +2,7 @@
 
 The `gardnera/tracepusher:v0.6.0-ci` image is CI ready.
 
-This containers drops you into a normal shell where you have access to various tools like hexdump (for generating UUIDs).
+This containers drops you into a normal shell where you have access to various tools like openssl (for generating UUIDs).
 
 Tracepusher can be executed using Python from within this container. See [Python usage instructions](python.md) for more info.
 
