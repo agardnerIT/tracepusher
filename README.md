@@ -10,6 +10,8 @@ Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 # Watch: tracepusher in Action
 [YouTube: tracepusher tracing a GitLab pipeline](https://www.youtube.com/watch?v=zZDFQNHepyI).
 
+If you like tracepusher and want to do the same thing with logs, check out [logpusher](https://agardnerit.github.io/logpusher).
+
 # Uses
 
 - [Trace CICD Pipelines with OpenTelemetry](samples/gitlab/README.md)
