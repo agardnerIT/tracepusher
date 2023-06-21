@@ -6,7 +6,7 @@ nav:
     - Usage > Python: usage/python.md
     - Usage > Docker: usage/docker.md
     - Usage > CI: usage/ci.md
-    - Multi Span Traces: reference/index.md
+    - Multi Span Traces: reference/multi-span-traces.md
     - Reference Pages: reference/index.md
     - FAQ: faq.md
     - Adopters: adopters.md
