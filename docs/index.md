@@ -12,6 +12,8 @@ Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/zZDFQNHepyI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
+Want to do a similar thing with logs? Check out [logpusher](https://agardnerit.github.io/logpusher).
+
 ##  Uses
 
 - [Trace CICD Pipelines with OpenTelemetry](https://github.com/agardnerIT/tracepusher/blob/main/samples/gitlab/README.md)
