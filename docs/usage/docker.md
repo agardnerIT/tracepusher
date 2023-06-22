@@ -1,5 +1,5 @@
 # Requirements and Prequisites
-- A running OpenTelemetry collector (see below)
+- A running OpenTelemetry collector
 - Docker
 
 ## Basic Docker Usage
