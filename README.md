@@ -29,7 +29,7 @@ See [use tracepusher as a Python script](https://agardnerit.github.io/tracepushe
 
 ## Docker Usage
 
-See [use tracepusher as a docker image](https://agardnerit.github.io/tracepusher/usage/python/).
+See [use tracepusher as a docker image](https://agardnerit.github.io/tracepusher/usage/docker/).
 
 ## CI Usage
 
