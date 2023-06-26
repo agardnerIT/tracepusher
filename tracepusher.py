@@ -138,10 +138,16 @@ if DEBUG_MODE:
 # hence this "appears" wrong by half but isn't
 # If this is a child span, we already have a trace_id and parent_span_id
 # So do not generate
+
 if trace_id == "":
   trace_id = secrets.token_hex(16)
+if len(trace_id) != 32:
+  sys.exit("Error: trace_id should be 32 characters long!")
+
 if span_id == "":
   span_id = secrets.token_hex(8)
+if len(span_id) != 16:
+  sys.exit("Error: span_id should be 16 characters long!")
 
 
 if DEBUG_MODE:
