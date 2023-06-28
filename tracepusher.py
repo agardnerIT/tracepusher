@@ -13,7 +13,72 @@ import argparse
 # USAGE
 # python tracepusher.py -ep=http(s)://localhost:4318 -sen=serviceNameA -spn=spanX -dur=2
 #############################################################################
-   
+
+# Minimum
+# offsetInMillis=name=key=value
+# In which case:
+# - timestamp of event is + offset by milliseconds given in input from time_now
+# - value type is assumed to be string
+#
+# offsetInMillis=name=key=value=valueType
+# 0=event1=userID=23=intValue
+def get_span_events_list(args, time_now):
+  
+  event_list = []
+  dropped_event_count = 0
+  
+  if args == None or len(args) < 1:
+     return event_list, dropped_event_count
+  
+  for item in args:
+    # How many = are in the item?
+    # <3 = invalid item. Ignore
+    # 3 = offsetInMillis=name=key=value (tracepusher assumes type=stringValue)
+    # 4 = offsetInMillis=name=key=value=type (user is explicitly telling us the type. tracepusher uses it)
+    # >4 = invalid item. Ignore
+    number_of_equals = item.count("=")
+    if number_of_equals != 3 and number_of_equals != 4:
+        dropped_event_count += 1
+        continue
+    
+    offset_millis = 0
+    event_name = ""
+    event_key = ""
+    event_value = ""
+    event_type = "stringValue"
+    dropped_event_count = 0
+
+    if number_of_equals != 3 and number_of_equals != 4:
+        dropped_event_count += 1
+    
+    if number_of_equals == 3:
+        offset_millis_string, event_name, event_key, event_value = item.split("=", maxsplit=3)
+        offset_millis = int(offset_millis_string)
+        # User did not pass a type. Assuming type == 'stringValue'
+    
+    if number_of_equals == 4:
+        offset_millis_string, event_name, event_key, event_value, event_type = item.split('=',maxsplit=4)
+        offset_millis = int(offset_millis_string)
+        # User passed an explicit type. Tracepusher will use it.
+
+    # calculate event time
+    # millis to nanos
+    offset_nanos = offset_millis * 1000000
+    event_time = time_now + offset_nanos
+
+    event_list.append({
+       "timeUnixNano": event_time,
+       "name": event_name,
+       "attributes": [{
+          "key": event_key,
+          "value": {
+             event_type: event_value
+          }
+       }]
+    })
+
+  return event_list, dropped_event_count
+
 # Returns attributes list:
 # From spec: https://opentelemetry.io/docs/concepts/signals/traces/#attributes
 # Syntax: {
@@ -80,7 +145,7 @@ parser.add_argument('-psid','--parent-span-id', required=False, default="")
 parser.add_argument('-tid', '--trace-id', required=False, default="")
 parser.add_argument('-sid', '--span-id', required=False, default="")
 parser.add_argument('-spnattrs', '--span-attributes', required=False, nargs='*')
-
+parser.add_argument('-spnevnts', '--span-events', required=False, nargs='*')
 
 args = parser.parse_args()
 
@@ -143,7 +208,6 @@ if trace_id == "":
 if span_id == "":
   span_id = secrets.token_hex(8)
 
-
 if DEBUG_MODE:
   print(f"Trace ID: {trace_id}")
   print(f"Span ID: {span_id}")
@@ -164,6 +228,16 @@ if DEBUG_MODE:
    print(f"Time shifted? {TIME_SHIFT}")
    print(f"Time now: {time_now}")
    print(f"Time future: {time_future}")
+
+# Now that the right start / end time is available
+# process any span events
+span_events_list, dropped_event_count = get_span_events_list(args.span_events, time_now)
+
+if DEBUG_MODE:
+   print("Printing Span Events List:")
+   print(span_events_list)
+   print("-----")
+   print(f"Dropped Span Events Count: {dropped_event_count}")
 
 trace = {
  "resourceSpans": [
@@ -193,8 +267,8 @@ trace = {
              "end_time_unix_nano": time_future,
              "droppedAttributesCount": dropped_attribute_count,
              "attributes": span_attributes_list,
-             "events": [],
-             "droppedEventsCount": 0,
+             "events": span_events_list,
+             "droppedEventsCount": dropped_event_count,
              "status": {
                "code": 1
              }
