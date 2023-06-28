@@ -55,7 +55,13 @@ See [multi-span traces](https://agardnerit.github.io/tracepusher/reference/multi
 
 > Only supported with `v0.6.0` and above.
 
-See [span attribute types](https://agardnerit.github.io/tracepusher/reference/span-attribute-types/)
+See [span attribute types](https://agardnerit.github.io/tracepusher/reference/span-attribute-types/).
+
+## Span Events
+
+> Only supported with `v0.7.0` and above.
+
+See [span events](https://agardnerit.github.io/tracepusher/references/span-events/).
 
 ## Spin up OpenTelemetry Collector
 
