@@ -1,6 +1,6 @@
 ## tracepusher CI-ready image
 
-The `gardnera/tracepusher:v0.6.0-ci` image is CI ready.
+The `gardnera/tracepusher:v0.7.0-ci` image is CI ready.
 
 This containers drops you into a normal shell where you have access to various tools like openssl (for generating UUIDs).
 
