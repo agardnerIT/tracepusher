@@ -53,7 +53,7 @@ See [multi-span traces](https://agardnerit.github.io/tracepusher/reference/multi
 
 ## Span Attributes
 
-> Only supported with `v0.7.0` and above.
+> Only supported with `v0.6.0` and above.
 
 See [span attribute types](https://agardnerit.github.io/tracepusher/reference/span-attribute-types/).
 
