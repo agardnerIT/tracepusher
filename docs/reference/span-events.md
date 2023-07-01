@@ -20,7 +20,7 @@ or
 <eventTimeOffsetInMillisFromSpanStartTime>=<eventName>=<eventKey>=<eventValue>=<eventValueType>
 ```
 
-For example, to push an event that should be denoted at 100 milliseconds _after_ the span start time, where the event name is `eventA`, the key is `feature_flag.key`, the value is `hexColor` and the even value type (implied) is `stringValue`:
+For example, to push an event that should be denoted at 100 milliseconds _after_ the span start time, where the event name is `eventA`, the key is `feature_flag.key`, the value is `hexColor` and the event value type (implied) is `stringValue`:
 
 ```
 python ~/tracepusher/tracepusher.py \
