@@ -297,5 +297,10 @@ if DRY_RUN:
      print(trace)
    
 if not DRY_RUN:
-  resp = requests.post(f"{endpoint}/v1/traces", headers={ "Content-Type": "application/json" }, json=trace)
+  resp = requests.post(
+     f"{endpoint}/v1/traces", 
+     headers={ "Content-Type": "application/json" }, 
+     json=trace,
+     timeout=5 
+     )
   print(resp)
