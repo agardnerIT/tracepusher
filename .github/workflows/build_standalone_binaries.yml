@@ -25,6 +25,10 @@ jobs:
         run: "python -m PyInstaller --onefile tracepusher.py"
       - name: "List Directory Contents"
         run: "dir"
+      - name: setup git config
+        run: >
+          git config user.name "GitHub Actions Bot" &&
+          git config user.email "<>"
       - name: "Add Binary to Repo"
         run: >
           git add dist/tracepusher.exe &&
