@@ -4,6 +4,8 @@ import time
 import secrets
 import argparse
 
+VERSION="0.0.0"
+
 # This script is very simple. It does the equivalent of:
 # curl -i -X POST http(s)://endpoint/v1/traces \
 # -H "Content-Type: application/json" \
@@ -146,6 +148,7 @@ parser.add_argument('-tid', '--trace-id', required=False, default="")
 parser.add_argument('-sid', '--span-id', required=False, default="")
 parser.add_argument('-spnattrs', '--span-attributes', required=False, nargs='*')
 parser.add_argument('-spnevnts', '--span-events', required=False, nargs='*')
+parser.add_argument('--version', action='version', version=VERSION)
 
 args = parser.parse_args()
 
