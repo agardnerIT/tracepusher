@@ -27,6 +27,6 @@ jobs:
         run: "dir"
       - name: "Add Binary to Repo"
         run: >
-          git add dist/tracepusher.exe
-          git commit -m "add tracepusher.exe"
+          git add dist/tracepusher.exe &&
+          git commit -m "add tracepusher.exe" &&
           git push
