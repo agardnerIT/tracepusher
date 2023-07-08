@@ -1,5 +1,8 @@
 name: Publish docs via GitHub Pages
 on:
+  workflow_dispatch:
+    branches:
+      - "feat/self-container-binary"
   push:
     branches:
       - "feat/self-container-binary"
