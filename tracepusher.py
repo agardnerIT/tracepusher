@@ -5,6 +5,7 @@ import secrets
 import argparse
 
 VERSION="0.0.0"
+# dummy
 
 # This script is very simple. It does the equivalent of:
 # curl -i -X POST http(s)://endpoint/v1/traces \
