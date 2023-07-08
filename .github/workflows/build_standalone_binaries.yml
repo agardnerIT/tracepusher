@@ -25,3 +25,8 @@ jobs:
         run: "python -m PyInstaller --onefile tracepusher.py"
       - name: "List Directory Contents"
         run: "dir"
+      - name: "Add Binary to Repo"
+        run: >
+          git add dist/tracepusher.exe
+          git commit -m "add tracepusher.exe"
+          git push
