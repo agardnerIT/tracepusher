@@ -3,13 +3,10 @@ on:
   workflow_dispatch:
     branches:
       - "feat/self-contained-binary"
-  push:
-    branches:
-      - "feat/self-contained-binary"
 
 jobs:
-  build:
-    name: Build Self Contained Binaries
+  win_build_binary:
+    name: "[WIN] Build Self Contained Binary"
     runs-on: windows-latest
     steps:
       - name: Checkout master
@@ -21,11 +18,9 @@ jobs:
           cache: 'pip'
       - name: "Install Dependencies"
         run: pip install -r requirements.txt
-      - name: "Build Windows Binary"
+      - name: "Build Binary"
         run: "python -m PyInstaller --onefile tracepusher.py"
-      - name: "List Directory Contents"
-        run: "dir"
-      - name: setup git config
+      - name: "Setup git Config"
         run: >
           git config user.name "GitHub Actions Bot" &&
           git config user.email "<>"
@@ -33,4 +28,30 @@ jobs:
         run: >
           git add dist/tracepusher.exe &&
           git commit -m "add tracepusher.exe" &&
+          git push
+  linux_x64_build_binary:
+    name: "[LIN x64] Build Self Contained Binary"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v3
+      - name: Install Python and Pip Packages
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+      - name: "Install Dependencies"
+        run: pip install -r requirements.txt
+      - name: "Build Binary"
+        run: "python -m PyInstaller --onefile tracepusher.py"
+      - name: "Rename file"
+        run: "mv dist/tracepusher dist/tracepusher_linux_x64"
+      - name: "Setup git Config"
+        run: >
+          git config user.name "GitHub Actions Bot" &&
+          git config user.email "<>"
+      - name: "Add Binary to Repo"
+        run: >
+          git add dist/tracepusher_linux_x64 &&
+          git commit -m "add tracepusher_linux_x64 binary" &&
           git push
