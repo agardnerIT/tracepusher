@@ -21,3 +21,7 @@ jobs:
           cache: 'pip'
       - name: "Install Dependencies"
         run: pip install -r requirements.txt
+      - name: "Build Windows Binary"
+        run: "python -m PyInstaller --onefile tracepusher.py"
+      - name: "List Directory Contents"
+        run: "dir"
