@@ -1,0 +1,19 @@
+name: Publish docs via GitHub Pages
+on:
+  push:
+    branches:
+      - "feat/self-container-binary"
+
+jobs:
+  build:
+    name: Build Self Contained Binaries
+    runs-on: windows-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v3
+      - name: Install Python and Pip Packages
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+        run: pip install PyInstaller
