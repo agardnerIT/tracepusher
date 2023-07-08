@@ -1,4 +1,4 @@
-name: Publish docs via GitHub Pages
+name: Build Binaries
 on:
   workflow_dispatch:
     branches:
