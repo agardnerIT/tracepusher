@@ -63,7 +63,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
-        ref: "feat/self-contained-binary"
+        with:
+          ref: "feat/self-contained-binary"
       #- name: Install Python and Pip Packages
       #  run: >
       #    brew install python &&
