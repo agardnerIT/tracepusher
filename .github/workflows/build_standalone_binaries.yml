@@ -83,4 +83,4 @@ jobs:
           git add dist/tracepusher_darwin_arm &&
           git commit -m "add tracepusher binary" &&
           git pull origin feat/self-contained-binary &&
-          git push origin HEAD:feat/self-container-binary
+          git push
