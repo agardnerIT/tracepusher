@@ -63,13 +63,13 @@ jobs:
     steps:
       - name: Checkout master
         uses: actions/checkout@v3
-      - name: Install Python and Pip Packages
-        run: >
-          brew install python &&
-          python3 -m ensurepip &&
-          pip3 --version
-      - name: "Install Dependencies"
-        run: pip3 install -r requirements.txt
+      #- name: Install Python and Pip Packages
+      #  run: >
+      #    brew install python &&
+      #    python3 -m ensurepip &&
+      #    pip3 --version
+      #- name: "Install Dependencies"
+      #  run: pip3 install -r requirements.txt
       - name: "Build Binary"
         run: "python3 -m PyInstaller --onefile tracepusher.py"
       - name: "Rename file"
@@ -82,5 +82,5 @@ jobs:
         run: >
           git add dist/tracepusher_darwin_arm &&
           git commit -m "add tracepusher binary" &&
-          git pull &&
+          git pull --rebase=true &&
           git push
