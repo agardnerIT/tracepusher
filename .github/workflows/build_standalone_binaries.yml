@@ -1,6 +1,8 @@
 name: Build Binaries
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - "feat/self-contained-binary"
 
 jobs:
   win_build_binary:
