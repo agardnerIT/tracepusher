@@ -61,8 +61,9 @@ jobs:
     name: "[OSX ARM] Build Self Contained Binary"
     runs-on: ["self-hosted", "macOS", "ARM64"]
     steps:
-      - name: Checkout master
+      - name: Checkout Repo
         uses: actions/checkout@v3
+        ref: "feat/self-contained-binary"
       #- name: Install Python and Pip Packages
       #  run: >
       #    brew install python &&
@@ -81,6 +82,7 @@ jobs:
       - name: "Add Binary to Repo"
         run: >
           git add dist/tracepusher_darwin_arm &&
-          git commit -m "add tracepusher binary" &&
-          git pull origin feat/self-contained-binary &&
+          git commit -m "add binary" &&
+          git fetch origin &&
+          git pull origin &&
           git push
