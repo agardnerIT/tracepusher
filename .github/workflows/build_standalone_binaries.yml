@@ -65,7 +65,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install Python and Pip Packages
         run: >
-          brew install pip &&
+          brew install python &&
           python3 -m ensurepip &&
           pip3 --version
       - name: "Install Dependencies"
