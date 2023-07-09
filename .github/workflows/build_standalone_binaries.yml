@@ -63,15 +63,15 @@ jobs:
     steps:
       - name: Checkout master
         uses: actions/checkout@v3
-      #- name: Install Python and Pip Packages
-      #  uses: actions/setup-python@v4
-      #  with:
-      #    python-version: '3.9'
-      #    cache: 'pip'
-      #- name: "Install Dependencies"
-      #  run: pip install -r requirements.txt
+      - name: Install Python and Pip Packages
+        run: >
+          brew install pip &&
+          python3 -m ensurepip &&
+          pip3 --version
+      - name: "Install Dependencies"
+        run: pip3 install -r requirements.txt
       - name: "Build Binary"
-        run: "python -m PyInstaller --onefile tracepusher.py"
+        run: "python3 -m PyInstaller --onefile tracepusher.py"
       - name: "Rename file"
         run: "mv dist/tracepusher dist/tracepusher_darwin_arm"
       - name: "Setup git Config"
