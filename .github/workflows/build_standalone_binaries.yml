@@ -57,3 +57,30 @@ jobs:
           git commit -m "add tracepusher_linux_x64 binary" &&
           git pull &&
           git push
+  osx_arm_build_binary:
+    name: "[OSX ARM] Build Self Contained Binary"
+    runs-on: ["self-hosted", "macOS", "ARM64"]
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v3
+      - name: Install Python and Pip Packages
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+      - name: "Install Dependencies"
+        run: pip install -r requirements.txt
+      - name: "Build Binary"
+        run: "python -m PyInstaller --onefile tracepusher.py"
+      - name: "Rename file"
+        run: "mv dist/tracepusher dist/tracepusher_darwin_arm"
+      - name: "Setup git Config"
+        run: >
+          git config user.name "GitHub Actions Bot" &&
+          git config user.email "<>"
+      - name: "Add Binary to Repo"
+        run: >
+          git add dist/tracepusher_darwin_arm &&
+          git commit -m "add tracepusher binary" &&
+          git pull &&
+          git push
