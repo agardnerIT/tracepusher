@@ -24,8 +24,11 @@ python tracepusher.py \
 --trace-id <32 character hex id>
 --span-id <16 character hex id>
 --span-attributes key=value [key2=value2...]
+--span-events timeOffsetInMillis=EventName=AttributeKey=AttributeValue=type [event2...] [event3...]
 ```
 
 For information on span atttributes and span attribute types, see [Span Attribute Types](../reference/span-attribute-types.md).
+
+For information on span events, see [Span Events](../reference/span-events.md)
 
 For multi-span traces, see [multi span traces](../reference/multi-span-traces.md)

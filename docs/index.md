@@ -27,7 +27,7 @@ See [try tracepusher](try.md)
 ## Quick Start
 
 ```
-docker run gardnera/tracepusher:v0.6.0 \
+docker run gardnera/tracepusher:v0.7.0 \
 --endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
 --service-name service_name \
 --span-name span_name \
@@ -44,4 +44,5 @@ See the following pages for advanced usage and reference information for the fla
 - [Complex (Multi Span) Traces](reference/multi-span-traces.md)
 - [Span time shifting](reference/time-shifting.md)
 - [Span attributes and span attribute types](reference/span-attribute-types.md)
+- [Span events](reference/span-events.md)
 - [tracepusher flag reference pages](reference/index.md)
