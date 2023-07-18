@@ -148,7 +148,6 @@ def process_span_kind(input):
   else:
      output = f"SPAN_KIND_{output}"
   
-  print(f"Setting Span Kind: {output}")
   return output
   
    
@@ -165,6 +164,7 @@ parser.add_argument('-ep', '--endpoint', required=True)
 parser.add_argument('-sen','--service-name', required=True)
 parser.add_argument('-spn', '--span-name', required=True)
 parser.add_argument('-dur', '--duration', required=True, type=int)
+parser.add_argument('-dt', '--duration-type', required=False, default="s")
 parser.add_argument('-dr','--dry-run','--dry', required=False, default="False")
 parser.add_argument('-x', '--debug', required=False, default="False")
 parser.add_argument('-ts', '--time-shift', required=False, default="False")
@@ -181,6 +181,7 @@ endpoint = args.endpoint
 service_name = args.service_name
 span_name = args.span_name
 duration = args.duration
+duration_type = args.duration_type
 dry_run = args.dry_run
 debug_mode = args.debug
 time_shift = args.time_shift
@@ -227,6 +228,7 @@ if DEBUG_MODE:
   print(f"Trace ID: {trace_id}")
   print(f"Span ID: {span_id}")
   print(f"Dropped Attribute Count: {dropped_attribute_count}")
+  print(f"Span Kind: {span_kind}")
 
 # Generate random chars for trace and span IDs
 # of 32 chars and 16 chars respectively
