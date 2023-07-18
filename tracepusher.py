@@ -125,6 +125,33 @@ def get_span_attributes_list(args):
     
     return arg_list, dropped_attribute_count
 
+def process_span_kind(input):
+  valid_values = [
+     "UNSPECIFIED",
+     "INTERNAL",
+     "CLIENT",
+     "SERVER",
+     "CONSUMER",
+     "PRODUCER"
+  ]
+  output = ""
+  output = input.upper()
+  # If span kind is not valid
+  # Maintain backwards compatibility
+  # Default to SPAN_KIND_INTERNAL
+  # If span kind is set to unspecified
+  # Default (as per OTEL spec) to INTERNAL
+  if output not in valid_values:
+    output = ""
+  elif output == "UNSPECIFIED":
+     output = "SPAN_KIND_INTERNAL"
+  else:
+     output = f"SPAN_KIND_{output}"
+  
+  print(f"Setting Span Kind: {output}")
+  return output
+  
+   
 parser = argparse.ArgumentParser()
 
 # Notes:
@@ -146,6 +173,7 @@ parser.add_argument('-tid', '--trace-id', required=False, default="")
 parser.add_argument('-sid', '--span-id', required=False, default="")
 parser.add_argument('-spnattrs', '--span-attributes', required=False, nargs='*')
 parser.add_argument('-spnevnts', '--span-events', required=False, nargs='*')
+parser.add_argument('-sk', '--span-kind', required=False, default="INTERNAL")
 
 args = parser.parse_args()
 
@@ -159,8 +187,12 @@ time_shift = args.time_shift
 parent_span_id = args.parent_span_id
 trace_id = args.trace_id
 span_id = args.span_id
+span_kind = args.span_kind
 
 span_attributes_list, dropped_attribute_count = get_span_attributes_list(args.span_attributes)
+span_kind = process_span_kind(span_kind)
+if span_kind == "":
+   sys.exit("Error: invalid span kind provided.")
 
 # Debug mode required?
 DEBUG_MODE = False
