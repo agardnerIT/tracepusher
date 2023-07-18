@@ -2,7 +2,7 @@ name: Build Binaries
 on:
   push:
     branches:
-      - "add_duration_type"
+      - "add-duration-type"
 
 jobs:
   win_build_binary:
