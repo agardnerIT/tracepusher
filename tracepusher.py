@@ -346,7 +346,7 @@ if DEBUG_MODE:
    print(trace)
 
 if DRY_RUN:
-   print(f"Collector URL: {endpoint}. Service Name: {service_name}. Span Name: {span_name}. Trace Length (seconds): {duration}")
+   print(f"Collector URL: {endpoint}. Service Name: {service_name}. Span Name: {span_name}. Trace Length ({duration_type}): {duration}")
    # Only print if also not running in DEBUG_MODE
    # Otherwise we get a double print
    if not DEBUG_MODE:
