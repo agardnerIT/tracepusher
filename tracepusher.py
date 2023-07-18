@@ -148,8 +148,15 @@ def process_span_kind(input):
   else:
      output = f"SPAN_KIND_{output}"
   
-  print(f"Setting Span Kind: {output}")
   return output
+
+def check_duration_type(input):
+   valid_values = [ "ms", "s" ]
+
+   if input.lower() in valid_values:
+      return True
+   else:
+      return False
   
    
 parser = argparse.ArgumentParser()
@@ -165,6 +172,7 @@ parser.add_argument('-ep', '--endpoint', required=True)
 parser.add_argument('-sen','--service-name', required=True)
 parser.add_argument('-spn', '--span-name', required=True)
 parser.add_argument('-dur', '--duration', required=True, type=int)
+parser.add_argument('-dt', '--duration-type', required=False, default="s")
 parser.add_argument('-dr','--dry-run','--dry', required=False, default="False")
 parser.add_argument('-x', '--debug', required=False, default="False")
 parser.add_argument('-ts', '--time-shift', required=False, default="False")
@@ -181,6 +189,7 @@ endpoint = args.endpoint
 service_name = args.service_name
 span_name = args.span_name
 duration = args.duration
+duration_type = args.duration_type
 dry_run = args.dry_run
 debug_mode = args.debug
 time_shift = args.time_shift
@@ -193,6 +202,10 @@ span_attributes_list, dropped_attribute_count = get_span_attributes_list(args.sp
 span_kind = process_span_kind(span_kind)
 if span_kind == "":
    sys.exit("Error: invalid span kind provided.")
+
+duration_type_valid = check_duration_type(duration_type)
+if not duration_type_valid:
+   sys.exit("Error: Duration Type invalid. Try `ms` for milliseconds or `s` for seconds")
 
 # Debug mode required?
 DEBUG_MODE = False
@@ -220,6 +233,7 @@ if DEBUG_MODE:
   print(f"Service Name: {service_name}")
   print(f"Span Name: {span_name}")
   print(f"Duration: {duration}")
+  print(f"Duration Type: {duration_type}")
   print(f"Dry Run: {type(dry_run)} = {dry_run}")
   print(f"Debug: {type(debug_mode)} = {debug_mode}")
   print(f"Time Shift: {type(time_shift)} = {time_shift}")
@@ -251,7 +265,12 @@ if DEBUG_MODE:
   print(f"Span ID: {span_id}")
   print(f"Parent Span ID: {parent_span_id}")
 
-duration_nanos = duration * 1000000000
+duration_nanos = 0
+if duration_type == "ms":
+   duration_nanos = duration * 1000000 # ms to ns
+elif duration_type == "s":
+   duration_nanos = duration * 1000000000 # s to ns
+
 # get time now
 time_now = time.time_ns()
 # calculate future time by adding that many seconds
