@@ -149,8 +149,15 @@ def process_span_kind(input):
      output = f"SPAN_KIND_{output}"
   
   return output
+
+def check_duration_type(input):
+   valid_values = [ "ms", "s" ]
+
+   if input.lower() in valid_values:
+      return True
+   else:
+      return False
   
-   
 parser = argparse.ArgumentParser()
 
 # Notes:
@@ -195,6 +202,10 @@ span_kind = process_span_kind(span_kind)
 if span_kind == "":
    sys.exit("Error: invalid span kind provided.")
 
+duration_type_valid = check_duration_type(duration_type)
+if not duration_type_valid:
+   sys.exit("Error: Duration Type invalid. Try `ms` for milliseconds or `s` for seconds")
+
 # Debug mode required?
 DEBUG_MODE = False
 if debug_mode.lower() == "true":
@@ -221,6 +232,7 @@ if DEBUG_MODE:
   print(f"Service Name: {service_name}")
   print(f"Span Name: {span_name}")
   print(f"Duration: {duration}")
+  print(f"Duration Type: {duration_type}")
   print(f"Dry Run: {type(dry_run)} = {dry_run}")
   print(f"Debug: {type(debug_mode)} = {debug_mode}")
   print(f"Time Shift: {type(time_shift)} = {time_shift}")
@@ -253,7 +265,12 @@ if DEBUG_MODE:
   print(f"Span ID: {span_id}")
   print(f"Parent Span ID: {parent_span_id}")
 
-duration_nanos = duration * 1000000000
+duration_nanos = 0
+if duration_type == "ms":
+   duration_nanos = duration * 1000000 # ms to ns
+elif duration_type == "s":
+   duration_nanos = duration * 1000000000 # s to ns
+
 # get time now
 time_now = time.time_ns()
 # calculate future time by adding that many seconds
@@ -329,7 +346,7 @@ if DEBUG_MODE:
    print(trace)
 
 if DRY_RUN:
-   print(f"Collector URL: {endpoint}. Service Name: {service_name}. Span Name: {span_name}. Trace Length (seconds): {duration}")
+   print(f"Collector URL: {endpoint}. Service Name: {service_name}. Span Name: {span_name}. Trace Length ({duration_type}): {duration}")
    # Only print if also not running in DEBUG_MODE
    # Otherwise we get a double print
    if not DEBUG_MODE:
