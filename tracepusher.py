@@ -241,6 +241,7 @@ if DEBUG_MODE:
   print(f"Trace ID: {trace_id}")
   print(f"Span ID: {span_id}")
   print(f"Dropped Attribute Count: {dropped_attribute_count}")
+  print(f"Span Kind: {span_kind}")
 
 # Generate random chars for trace and span IDs
 # of 32 chars and 16 chars respectively
