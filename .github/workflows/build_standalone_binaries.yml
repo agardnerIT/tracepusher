@@ -1,6 +1,8 @@
 name: Build Binaries
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - "main"
 
 jobs:
   win_build_binary:
@@ -32,7 +34,7 @@ jobs:
           git push
   linux_x64_build_binary:
     name: "[LIN x64] Build Self Contained Binary"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
