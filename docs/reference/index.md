@@ -10,3 +10,4 @@
 - [Span Attribute Types](span-attribute-types.md)
 - [Time Shifting](time-shifting.md)
 - [Span Events](span-events.md)
+- [Span Kind](span-kind.md)
