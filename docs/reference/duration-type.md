@@ -2,14 +2,14 @@
 
 The optional flag `-dt` or `--duration-type` allows users to specify the span duration type.
 
-If not specified, tracepusher generates spans of a duration type in `seconds`. But using the above parameter, a user can override this.
+If not specified, tracepusher generates spans of a duration type in `seconds`. Using the above parameter, a user can override this.
 
 ### Valid Span Duration Types
 
 - `s`: seconds (default)
 - `ms`
 
-### Example
+### Examples
 
 Generate a 2 second long span:
 
