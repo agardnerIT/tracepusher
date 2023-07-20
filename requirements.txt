@@ -1,1 +1,2 @@
 requests==2.31.0
+pyinstaller==5.13.0
