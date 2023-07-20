@@ -69,6 +69,14 @@ See [span events](https://agardnerit.github.io/tracepusher/reference/span-events
 
 See [span kind](https://agardnerit.github.io/tracepusher/reference/span-kind/)
 
+## Span Duration and Duration Type
+
+tracepusher will generate spans of `n` seconds.
+
+This behaviour can be overridden by using the `--duration-type` parameter.
+
+See [duration type](https://agardnerit.github.io/tracepusher/reference/duration-type/) page.
+
 ## Spin up OpenTelemetry Collector
 
 See [OpenTelemetry Collector configuration](https://agardnerit.github.io/tracepusher/reference/otel-col)

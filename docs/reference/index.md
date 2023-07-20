@@ -11,3 +11,4 @@
 - [Time Shifting](time-shifting.md)
 - [Span Events](span-events.md)
 - [Span Kind](span-kind.md)
+- [Span Durations and Duration Types](duration-type.md)
