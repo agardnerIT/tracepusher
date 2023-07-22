@@ -319,7 +319,7 @@ trace = {
              "traceId": trace_id,
              "spanId": span_id,
              "name": span_name,
-             "kind": "SPAN_KIND_INTERNAL",
+             "kind": span_kind,
              "start_time_unix_nano": time_now,
              "end_time_unix_nano": time_future,
              "droppedAttributesCount": dropped_attribute_count,
