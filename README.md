@@ -104,13 +104,19 @@ docker buildx build --platform linux/arm64,linux/amd64 --push -t tracepusher:dev
 docker buildx build --platform linux/arm64,linux/amd64 --push -t tracepusher:dev -f ./docker/standard/Dockerfile .
 ```
 
-# Testing
+# Install Requirement
 
-Install Pytest:
-
+For Non-Developer
 ```
 pip install -r requirements.txt
 ```
+
+For Developer
+```
+pip install -r requirements-dev.txt
+```
+
+# Testing
 
 Run the test suite:
 
