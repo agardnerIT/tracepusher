@@ -1,6 +1,6 @@
 image:
   # Important: Specify the CI tagged image which provides a shell, and has no entrypoint.
-  name: gardnera/tracepusher:v0.7.0-ci
+  name: gardnera/tracepusher:v0.8.0-ci
 
 variables:
   # Set your OTEL collector endpoint address here...
