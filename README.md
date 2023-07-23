@@ -106,7 +106,7 @@ docker buildx build --platform linux/arm64,linux/amd64 --push -t tracepusher:dev
 
 # Install Requirement
 
-For Non-Developer
+For Non-Developers
 ```
 pip install -r requirements.txt
 ```
