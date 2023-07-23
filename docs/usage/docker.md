@@ -5,7 +5,7 @@
 ## Basic Docker Usage
 
 ```
-docker run gardnera/tracepusher:v0.7.0 \
+docker run gardnera/tracepusher:v0.8.0 \
 -ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
 -sen service_name \
 -spn span_name \
@@ -15,6 +15,7 @@ docker run gardnera/tracepusher:v0.7.0 \
 ### Optional Parameters
 
 ```
+--duration-type ms|s (defaults to `s` > seconds)
 --dry-run True|False
 --debug True|False
 --time-shift True|False
@@ -23,6 +24,7 @@ docker run gardnera/tracepusher:v0.7.0 \
 --span-id <16 character hex id>
 --span-attributes key=value key2=value2=type
 --span-events timeOffsetInMillis=EventName=AttributeKey=AttributeValue=type [event2...] [event3...]
+--span-kind UNSPECIFIED|INTERNAL|CLIENT|SERVER|CONSUMER|PRODUCER (defaults to `INTERNAL`)
 ```
 
 For span atttribute types, see [Span Attribute Types](../reference/span-attribute-types.md).
@@ -30,3 +32,7 @@ For span atttribute types, see [Span Attribute Types](../reference/span-attribut
 For span events, see [Span events](../reference/span-events.md)
 
 For multi-span traces, see [multi span traces](../reference/multi-span-traces.md)
+
+For duration type, see [duration type](../reference/duration-type.md)
+
+For span kind, see [span kind](../reference/span-kind.md)

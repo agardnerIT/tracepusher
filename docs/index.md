@@ -26,9 +26,16 @@ See [try tracepusher](try.md)
 
 ## Quick Start
 
+Tracepusher is available as:
+
+- Standalone binaries (download from the releases page on GitHub)
+- Docker images
+- Python script
+
+Download the binary [from the releases page](https://github.com/agardnerIT/tracepusher/releases/latest) then run:
+
 ```
-docker run gardnera/tracepusher:v0.7.0 \
---endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
+./tracepusher --endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
 --service-name service_name \
 --span-name span_name \
 --duration SPAN_TIME_IN_SECONDS
@@ -38,6 +45,7 @@ docker run gardnera/tracepusher:v0.7.0 \
 
 See the following pages for advanced usage and reference information for the flags:
 
+- [Standalone binary usage](usage/standalone.md)
 - [Docker usage](usage/docker.md)
 - [Python usage](usage/python.md)
 - [CI system usage](usage/ci.md)

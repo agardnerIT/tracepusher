@@ -62,7 +62,7 @@ python tracepusher.py \
 ```
 
 ```
-docker run gardnera/tracepusher:v0.7.0 \
+docker run gardnera/tracepusher:v0.8.0 \
 -ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
 -sen service_name \
 -spn span_name \
