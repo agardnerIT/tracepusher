@@ -71,6 +71,8 @@ See [span kind](https://agardnerit.github.io/tracepusher/reference/span-kind/)
 
 ## Span Duration and Duration Type
 
+> Only supported with `v0.8.0` and above.
+
 tracepusher will generate spans of `n` seconds.
 
 This behaviour can be overridden by using the `--duration-type` parameter.
