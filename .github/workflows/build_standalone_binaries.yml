@@ -33,33 +33,32 @@ jobs:
       - name: "Upload Binary to S3"
         run: |
           aws s3 cp dist/tracepusher.exe s3://${{ secrets.BUCKET_NAME }}/tracepusher_${{ inputs.version }}.exe
-#   linux_x64_build_binary:
-#     name: "[LIN x64] Build Self Contained Binary"
-#     runs-on: ubuntu-20.04
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v3
-#         with:
-#           ref: "main"
-#       - name: Install Python and Pip Packages
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.11.4'
-#           cache: 'pip'
-#       - name: "Install Dependencies"
-#         run: pip install -r requirements.txt
-#       - name: "Build Binary"
-#         run: "python -m PyInstaller --onefile tracepusher.py"
-#       - name: "Rename file"
-#         run: "mv dist/tracepusher dist/tracepusher_linux_x64"
-#       - name: "Setup git Config"
-#         run: >
-#           git config user.name "GitHub Actions Bot" &&
-#           git config user.email "<>"
-#       - name: "Add Binary to Repo"
-#         run: >
-#           git add dist/tracepusher_linux_x64 &&
-#           git commit -m "add tracepusher_linux_x64 binary" &&
-#           git pull &&
-#           git push
+  linux_x64_build_binary:
+    name: "[LIN x64] Build Self Contained Binary"
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: "main"
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2.2.0
+        with:
+          aws-access-key-id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          aws-secret-access-key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          aws-region: "ap-southeast-2"
+      - name: Install Python and Pip Packages
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.4'
+          cache: 'pip'
+      - name: "Install Dependencies"
+        run: pip install -r requirements.txt
+      - name: "Build Binary"
+        run: "python -m PyInstaller --onefile tracepusher.py"
+      - name: "Rename file"
+        run: "mv dist/tracepusher dist/tracepusher_linux_x64"
+      - name: "Upload Binary to S3"
+        run: |
+          aws s3 cp dist/tracepusher_linux_x64 s3://${{ secrets.BUCKET_NAME }}/tracepusher_linux_x64_${{ inputs.version }}
 # TODO: Add ARM for MacOS runner when this is available: https://github.com/github/roadmap/issues/528
