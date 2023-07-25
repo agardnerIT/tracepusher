@@ -8,6 +8,8 @@ On local collector `http://localhost:4317 (gRPC only)`, run :
 ```
 pytest --export-traces
 ```
+[docs](https://github.com/chrisguidry/pytest-opentelemetry)
+
 ![architecture](assets/architecture.png)
 ![trace](assets/trace.png)
 
@@ -117,7 +119,7 @@ For Non-Developers
 pip install -r requirements.txt
 ```
 
-For Developer
+For Developers
 ```
 pip install -r requirements-dev.txt
 ```
