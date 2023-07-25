@@ -4,6 +4,10 @@
 
 Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
+On local collector `http://localhost:4317 (gRPC only)`, run :
+```
+pytest --export-traces
+```
 ![architecture](assets/architecture.png)
 ![trace](assets/trace.png)
 
