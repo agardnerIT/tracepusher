@@ -4,6 +4,8 @@
 
 Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
+You can generate traces by running `pytest --export-traces`. Read the [documentation here](https://github.com/chrisguidry/pytest-opentelemetry)
+
 ![architecture](assets/architecture.png)
 ![trace](assets/trace.png)
 
@@ -113,7 +115,7 @@ For Non-Developers
 pip install -r requirements.txt
 ```
 
-For Developer
+For Developers
 ```
 pip install -r requirements-dev.txt
 ```
