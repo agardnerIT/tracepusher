@@ -4,11 +4,8 @@
 
 Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
-On local collector `http://localhost:4317 (gRPC only)`, run :
-```
-pytest --export-traces
-```
-[docs](https://github.com/chrisguidry/pytest-opentelemetry)
+You can generate traces by running `pytest --export-traces` to a local collector on `http://localhost:4317` (gRPC only).
+Read the [documentation here](https://github.com/chrisguidry/pytest-opentelemetry)
 
 ![architecture](assets/architecture.png)
 ![trace](assets/trace.png)
