@@ -5,7 +5,6 @@ Trace anything with OpenTelemetry!
 Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 
 ![architecture](assets/architecture.png)
-![trace](assets/trace.png)
 ![complex trace](assets/complex-trace.png)
 
 ## Watch: Tracepusher in Action
