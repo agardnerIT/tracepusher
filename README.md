@@ -7,7 +7,7 @@ Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
 You can generate traces by running `pytest --export-traces`. Read the [documentation here](https://github.com/chrisguidry/pytest-opentelemetry)
 
 ![architecture](assets/architecture.png)
-![trace](assets/trace.png)
+![trace](assets/complex-trace.png)
 
 # Watch: tracepusher in Action
 [YouTube: tracepusher tracing a GitLab pipeline](https://www.youtube.com/watch?v=zZDFQNHepyI).
