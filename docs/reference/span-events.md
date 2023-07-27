@@ -42,18 +42,17 @@ python ~/tracepusher/tracepusher.py \
   --span-events 0=eventA=userID=23=intValue
 ```
 
-Multiple
 Tracepusher will accept two possible inputs:
 
-- `--span-attributes 0=eventName=key=vaue`
-- `--span-attributes 0=eventName=key=value=<TYPE>`
+- `--span-events 0=eventName=key=vaue`
+- `--span-events 0=eventName=key=value=<TYPE>`
 
 ## Send Multiple Span Events
 
-Separate each attribute with a space.
+Separate each event with a space.
 
 ```
-python tracepusher.py \
+./tracepusher \
 --endpoint http(s)://OTEL-COLLECTOR-ENDPOINT:4318
 --service-name service_name \
 --span-name spanA \
@@ -62,7 +61,7 @@ python tracepusher.py \
 ```
 
 ```
-docker run gardnera/tracepusher:v0.8.0 \
+./tracepusher \
 -ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
 -sen service_name \
 -spn span_name \
