@@ -27,9 +27,9 @@ See [try tracepusher](try.md)
 
 Tracepusher is available as:
 
-- Standalone binaries (download from the releases page on GitHub)
-- Docker images
-- Python script
+- [Standalone binaries](usage/standalone.md)
+- [Python script](usage/python.md)
+- [Docker image](usage/docker.md)
 
 Download the binary [from the releases page](https://github.com/agardnerIT/tracepusher/releases/latest) then run:
 
