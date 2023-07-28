@@ -3,6 +3,7 @@ nav:
     - Home: index.md
     - Try tracepusher: try.md
     - Usage: usage/index.md
+    - Usage > Standalone Binary: usage/standalone.md
     - Usage > Python: usage/python.md
     - Usage > Docker: usage/docker.md
     - Usage > CI: usage/ci.md
