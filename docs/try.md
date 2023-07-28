@@ -8,4 +8,4 @@ Try tracepusher from your browser, with nothing to install.
 
 ## Use tracepusher
 
-tracepusher can be used either via a [docker image](usage/docker.md), [CI-ready docker image](usage/ci.md) or [Python script](usage/python.md).
+tracepusher can [downloaded as a standalone binary](usage/standalone.md), as a [docker image](usage/docker.md), [CI-ready docker image](usage/ci.md) or [Python script](usage/python.md).
