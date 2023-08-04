@@ -16,6 +16,7 @@ If you like tracepusher and want to do the same thing with logs, check out [logp
 
 - [Trace CICD Pipelines with OpenTelemetry](samples/gitlab/README.md)
 - [Trace shell scripts with OpenTelemetry](samples/script.sh)
+- [Trace Helm with OpenTelemetry](https://github.com/agardnerit/helm-trace)
 - Trace anything with OpenTelemetry!
 
 # Try In Browser
