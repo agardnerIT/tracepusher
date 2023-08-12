@@ -2,7 +2,7 @@
 
 It is possible to trace `helm` commands using tracepusher.
 
-Just add the word `trace` to any regulard `helm` command.
+Just add the word `trace` to any regular `helm` command.
 
 For example, `helm version` becomes `helm trace version`
 
