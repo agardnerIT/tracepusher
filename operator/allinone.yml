@@ -1,0 +1,111 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: jobtracers.tracers.tracepusher.github.io
+spec:
+  scope: Namespaced
+  group: tracers.tracepusher.github.io
+  names:
+    kind: JobTracer
+    plural: jobtracers
+    singular: jobtracer
+    shortNames:
+      - jt
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              default: {}
+              properties:
+                collectorEndpoint:
+                  type: string
+                  default: ""
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jobtracer-operator-cluster-role
+rules:
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions"]
+  verbs: ["create"]
+- apiGroups: ["tracers.tracepusher.github.io"]
+  resources: ["jobtracers"]
+  verbs: ["*"]
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["*"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jobtracer-service-account
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: jobtracer-role-binding
+subjects:
+- kind: ServiceAccount
+  name: jobtracer-service-account
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: jobtracer-operator-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobtracer-operator
+  labels:
+    app: jobtracer-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jobtracer-operator
+  template:
+    metadata:
+      labels:
+        app: jobtracer-operator
+    spec:
+      serviceAccountName: jobtracer-service-account
+      containers:
+      - name: jobtracer-operator
+        image: gardnera/jobtracer-operator:dev
+        imagePullPolicy: Always
+---
+apiVersion: tracers.tracepusher.github.io/v1
+kind: JobTracer
+metadata:
+  name: tracer
+  namespace: default
+spec:
+  collectorEndpoint: "http://your-collector.namespace.svc.cluster.local:4318"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi
+  namespace: default
+  #annotations:
+  #  tracepusher/ignore: "true"
+  #  tracepusher/collector: "http://example.com:4318"
+spec:
+  template:
+    spec:
+      containers:
+      - name: pi
+        image: perl:5.34.0
+        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+      restartPolicy: Never
+  backoffLimit: 0
