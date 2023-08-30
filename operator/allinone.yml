@@ -41,7 +41,7 @@ rules:
   verbs: ["*"]
 - apiGroups: ["batch"]
   resources: ["jobs"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch"]
 ---
 apiVersion: v1
 kind: ServiceAccount
