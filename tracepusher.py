@@ -157,7 +157,14 @@ def check_duration_type(input):
       return True
    else:
       return False
-  
+
+def get_span_status_int(input):
+  if input.lower() == "ok":
+    return 1
+  if input.lower() == "error":
+    return 2
+  return 0
+
 parser = argparse.ArgumentParser()
 
 # Notes:
@@ -181,6 +188,7 @@ parser.add_argument('-sid', '--span-id', required=False, default="")
 parser.add_argument('-spnattrs', '--span-attributes', required=False, nargs='*')
 parser.add_argument('-spnevnts', '--span-events', required=False, nargs='*')
 parser.add_argument('-sk', '--span-kind', required=False, default="INTERNAL")
+parser.add_argument('-ss', '--span-status', required=False, default="OK")
 
 args = parser.parse_args()
 
@@ -196,6 +204,7 @@ parent_span_id = args.parent_span_id
 trace_id = args.trace_id
 span_id = args.span_id
 span_kind = args.span_kind
+span_status = get_span_status_int(args.span_status)
 
 span_attributes_list, dropped_attribute_count = get_span_attributes_list(args.span_attributes)
 span_kind = process_span_kind(span_kind)
@@ -241,6 +250,7 @@ if DEBUG_MODE:
   print(f"Span ID: {span_id}")
   print(f"Dropped Attribute Count: {dropped_attribute_count}")
   print(f"Span Kind: {span_kind}")
+  print(f"Span Status: {span_status}")
 
 # Generate random chars for trace and span IDs
 # of 32 chars and 16 chars respectively
@@ -327,7 +337,7 @@ trace = {
              "events": span_events_list,
              "droppedEventsCount": dropped_event_count,
              "status": {
-               "code": 1
+               "code": span_status
              }
            }
          ]
