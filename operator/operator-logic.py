@@ -1,33 +1,152 @@
 import kopf
 from kubernetes import client
-from datetime import datetime
+from datetime import datetime, timezone
 import subprocess
+import secrets
 
-DATE_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
-collector_endpoint = ""
+default_collector_endpoint = ""
+jobs_to_process = []
 
-# Operator does not care
-# When job is created
-# Because start and stop time come on completion
-# TODO Future: Create spans for job creation failures?
+def call_tracepusher(tracepusher_args):
 
-#@kopf.on.create('job')
-#def on_create_job(spec, name, namespace, logger, **kwargs):
-#    logger.info(f"{name} Job created...")
+    full_cmd = ['python3', 'tracepusher.py'] + tracepusher_args
+    
+    # Call tracepusher
+    subprocess.call(full_cmd)
 
-# Main logic
+# type = "job" | "container"
+def get_tz_aware_start_finish_times(object, type):
+
+    DATE_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+
+    workload_succeeded = False
+    start_time_str = ""
+    finish_time_str = ""
+    workload_start_time = None
+    workload_end_time = None
+
+    if type == "job":
+        if "succeeded" in object['status']: workload_status = True
+
+        start_time_str = object['status']['startTime']
+
+        if workload_succeeded:
+            finish_time_str = object['status']['completionTime']
+        else:
+            finish_time_str = object['status']['conditions'][0]['lastTransitionTime']
+
+    if type == "container":
+        start_time_str = object['state']['terminated']['startedAt']
+        finish_time_str = object['state']['terminated']['finishedAt']
+
+    # Do processing in case either field starts with a 
+    # date of 1970
+    # If start time is empty
+    # set to be the same as the end time
+    if start_time_str.startswith('1970'):
+        start_time_str = finish_time_str
+    
+    # Make times timezone aware for UTC
+    workload_start_time = datetime.strptime(start_time_str, DATE_FORMAT)
+    workload_start_time = workload_start_time.replace(tzinfo=timezone.utc)
+    workload_end_time = datetime.strptime(finish_time_str, DATE_FORMAT)
+    workload_end_time = workload_end_time.replace(tzinfo=timezone.utc)
+
+    duration_seconds = int((workload_end_time - workload_start_time).total_seconds())
+
+    return workload_start_time, workload_end_time, duration_seconds
+
+
+@kopf.on.event('pods')
+def on_update_pod(event, spec, name, namespace, logger, **kwargs):
+    global jobs_to_process
+
+    # If this pod was spawned by a job, proceed
+    if "job-name" in event['object']['metadata']['labels']:
+        job_name = event['object']['metadata']['labels']['job-name']
+
+        # Make composite key of job name + namespace
+        # This is used to lookup the jobs the Operator SHOULD track
+        job_key = f"{job_name}/{namespace}"
+
+        # Skip jobs that should not be processed
+        job_keys_to_track = [ item['key'] for item in jobs_to_process ]
+        if job_key not in job_keys_to_track: return
+
+        if event['object']['status']['phase'] == "Succeeded" or event['object']['status']['phase'] == "Failed":
+
+            job_obj_from_tracker_list = next((item for item in jobs_to_process if item['key']==job_key), None)
+            job_main_trace_id = job_obj_from_tracker_list['main_trace_id']
+            job_main_span_id = job_obj_from_tracker_list['main_span_id']
+
+            job_name = event['object']['metadata']['labels']['job-name']
+
+            # Only send main trace when finalizers
+            # are all done
+            # (ie. no finalizers left in JSON)
+            # In other words, skip if finalizers remain
+            if "finalizers" in event['object']['metadata']:
+                return
+
+            container_statuses = event['object']['status']['containerStatuses']
+            for container_status in container_statuses:
+
+                container_span_status = "OK"
+
+                container_name = container_status['name']
+                container_exit_code = container_status['state']['terminated']['exitCode']
+                container_message = ""
+                # TODO: This is too presumptive
+                # Let users annotate to give their own success code
+                if container_exit_code != 0:
+                    container_span_status = "Error"
+
+                container_exit_reason = container_status['state']['terminated']['reason']
+                container_start_time, container_end_time, container_duration = get_tz_aware_start_finish_times(container_status, "container")
+
+                if "message" in container_status['state']['terminated']:
+                    container_message = container_status['state']['terminated']['message']
+                
+                # Generate a unique span ID for this container
+                # Link to main using trace_id and parent_span_id
+                container_span_id = secrets.token_hex(8)
+
+                # Call tracepusher
+                tracepusher_args = [
+                    "-ep",
+                    job_obj_from_tracker_list['collector_endpoint'],
+                    "-sen",
+                    "k8s",
+                    "-spn",
+                    container_name,
+                    "-dur",
+                    f"{container_duration}",
+                    "--span-status",
+                    container_span_status,
+                    "--time-shift",
+                    "true",
+                    "--trace-id",
+                    job_main_trace_id,
+                    "--parent-span-id",
+                    job_main_span_id,
+                    "-spnattrs",
+                    "type=container",
+                    f"namespace={namespace}",
+                    f"exit_code={container_exit_code}",
+                    f"reason={container_exit_reason}",
+                    f"message={container_message}"
+                ]
+                call_tracepusher(tracepusher_args=tracepusher_args)
+
+
 # This happens on every change event for a job
 @kopf.on.event('job')
 def on_event_job(event, spec, name, namespace, logger, **kwargs):
 
-    # Be able to access globally defined collector_endpoint
-    global collector_endpoint
-
-    # optional
-    # if job overrides global collector_endpoint
-    # with an annotation
-    # set as a new var
-    collector_endpoint_to_use = ""
+    # Be able to access globally defined default_collector_endpoint
+    global default_collector_endpoint
+    # Use this list to trace the jobs that SHOULD be processed
+    global jobs_to_process
 
     # If job is annotated
     # with
@@ -37,160 +156,111 @@ def on_event_job(event, spec, name, namespace, logger, **kwargs):
     if "tracepusher/ignore" in event['object']['metadata']['annotations'] and event['object']['metadata']['annotations']['tracepusher/ignore'].lower() == "true":
         logger.info("Job is annotated. Will ignore.")
         return
-    
+
+    # optional
+    # if job overrides global collector_endpoint
+    # with an annotation
+    # set as a new var
+    collector_endpoint_to_use = default_collector_endpoint
+
     if "tracepusher/collector" in event['object']['metadata']['annotations']:
-        logger.info("Job Annotated with a collector URL. This takes precedence over JobTracer. Use it.")
         collector_endpoint_to_use = event['object']['metadata']['annotations']['tracepusher/collector']
-    else:
-        collector_endpoint_to_use = collector_endpoint
 
     # If a collector endpoint
     # is not set
     # stop immediately
     # no point in continuing
     if collector_endpoint_to_use == "":
-        logger.error("Collector endpoint is not set. Will not track this job.")
+        logger.info("Collector endpoint is not set. Will not track this job.")
         return
+    
+    # A valid job to track
+    # If it isn't already in the list
+    if event['type'] == "ADDED" or event['type'] == "MODIFIED":
+        # Get existing keys and only add once
+        # Create a composite key of job name + namespace
+        # As there could be two identical job names in different namespaces
+        job_name_key = f"{name}/{namespace}"
+        keys = [ item['key'] for item in jobs_to_process ]
+        if job_name_key not in keys:
+            # Generate main trace ID and span ID
+            # The trace_id will be common for all traces in this job
+            main_trace_id = secrets.token_hex(16)
+            main_span_id = secrets.token_hex(8)
 
-    # Job finishes (successfully?) when all of the these conditions are true:
-    # event.type == "MODIFIED"
-    # event.status.startTime is not None
-    # event.status.completionTime is not None
+            jobs_to_process.append({
+                    "key": job_name_key,
+                    "job_name": name,
+                    "namespace": namespace,
+                    "collector_endpoint": collector_endpoint_to_use,
+                    "main_trace_id": main_trace_id,
+                    "main_span_id": main_span_id
+            })
+
+    # Job finishes when all of the these conditions are true:
     if event['type'] == "MODIFIED" and event['object']['status'] is not None:
 
         # if event.object.status has either 'succeeded' or 'failed' fields
         # it has completed
+        job_status = None
         job_has_finished = False
-        job_succeeded = None
+        job_reason = ""
+        job_message = ""
         if "succeeded" in event['object']['status']:
-            job_succeeded = True
+            job_status = "OK"
             job_has_finished = True
         elif "failed" in event['object']['status']:
-            job_succeeded = False
+            job_status = "ERROR"
             job_has_finished = True
+            job_reason = event['object']['status']['conditions'][0]['reason']
+            job_message = event['object']['status']['conditions'][0]['message']
         
         # Job hasn't finished
         # Do not process further
         if not job_has_finished:
             return
 
-        if job_has_finished:
-            logger.info(f"{name}: JOB HAS FINISHED!")
-        
-        number_of_containers_in_job = len(event['object']['spec']['template']['spec']['containers'])
+        logger.info(f"Job has finished")
 
-        # job start time is always present
-        # regardless of job success or failure
-        # set it now.
-        # only job end time differs
-        job_start_time_str = event['object']['status']['startTime']
-        job_start_time = datetime.strptime(job_start_time_str, DATE_FORMAT)
+        job_obj_from_tracker_list = next((item for item in jobs_to_process if item['key']==job_name_key), None)
+        job_main_trace_id = job_obj_from_tracker_list['main_trace_id']
+        job_main_span_id = job_obj_from_tracker_list['main_span_id']
+        job_collector_url = job_obj_from_tracker_list['collector_endpoint']
 
-        # If Job has a completionTime
-        # It was successful
-        # Otherwise it failed
-        if job_succeeded:
-            
-            job_end_time_str = event['object']['status']['completionTime']
-            job_end_time = datetime.strptime(job_end_time_str, DATE_FORMAT)
+        #logger.info(f"List before removal: {jobs_to_process}")
+        if job_obj_from_tracker_list is not None:
+            jobs_to_process.remove(job_obj_from_tracker_list)
+        #logger.info(f"List after removal: {jobs_to_process}")
 
-            logger.info(f"Job start time: {job_start_time} ({type(job_start_time)})")
-            logger.info(f"Job end time: {job_end_time} ({type(job_end_time)})")
-            
-            duration_std = job_end_time - job_start_time
-            duration = int((job_end_time - job_start_time).total_seconds())
-            logger.info(f"{name}: Job duration (standard): {duration_std}")
-            logger.info(f"{name}: Job duration: {duration}s")
+        job_start_time, job_end_time, job_duration = get_tz_aware_start_finish_times(event['object'], "job")
+        logger.info(f"JOB Details. JST: {job_start_time} - JET: {job_end_time} - JD: {job_duration}")
 
-            logger.info(f"Containers in Job: {number_of_containers_in_job}")
-
-            logger.info(f"Collector endpoint: {collector_endpoint_to_use}")
-
-            # Call tracepusher
-            subprocess.call([
-                "python3",
-                "tracepusher.py",
+        # Call tracepusher
+        tracepusher_args = [
                 "-ep",
-                collector_endpoint_to_use,
+                job_obj_from_tracker_list['collector_endpoint'],
                 "-sen",
                 "k8s",
                 "-spn",
                 name,
                 "-dur",
-                f"{duration}",
+                f"{job_duration}",
                 "--span-status",
-                "OK",
+                job_status,
                 "--time-shift",
                 "true",
+                "--trace-id",
+                job_main_trace_id,
+                "--span-id",
+                job_main_span_id,
                 "-spnattrs",
                 "type=job",
                 f"namespace={namespace}",
-                f"container_count={number_of_containers_in_job}"
-                ])
-        # Job failed
-        if not job_succeeded:
+                f"job_message={job_message}",
+                f"job_reason={job_reason}"
+            ]
+        call_tracepusher(tracepusher_args=tracepusher_args)
 
-            job_end_time_str = event['object']['status']['conditions'][0]['lastTransitionTime']
-            job_end_time = datetime.strptime(job_end_time_str, DATE_FORMAT)
-
-            logger.info(f"Failed end time str: {job_end_time_str}")
-            logger.info(f"Failed end time: {job_end_time}")
-
-            duration_std = job_end_time - job_start_time
-            duration = int((job_end_time - job_start_time).total_seconds())
-            logger.info(f"{name}: Job duration: {duration}s")
-
-            # object.status.lastTransitionTime can be used for finish time
-            # object.status.reason = "BackoffLimitExceeded"
-            # object.status.message = "Job has reached..."
-            # object.spec.backoffLimit
-            failure_reason = event['object']['status']['conditions'][0]['reason']
-            failure_message = event['object']['status']['conditions'][0]['message']
-            backoff_limit = event['object']['spec']['backoffLimit']
-            #logger.info(event['object']['spec'])
-
-            # Call tracepusher
-            tracepusher_cmd = [
-                    "python3",
-                    "tracepusher.py",
-                    "-ep",
-                    collector_endpoint_to_use,
-                    "-sen",
-                    "k8s",
-                    "-spn",
-                    name,
-                    "-dur",
-                    f"{duration}",
-                    "--span-status",
-                    "ERROR",
-                    "--time-shift",
-                    "true",
-                    "-spnattrs",
-                    "type=job",
-                    f"namespace={namespace}",
-                    f"container_count={number_of_containers_in_job}",
-                    f"backoff_limit={backoff_limit}",
-                    f"failure_message={failure_message}",
-                    f"failure_reason={failure_reason}"
-                ]
-            
-            # Read pod logs for job to get proper failure info
-            api_instance = client.CoreV1Api()
-            job_pods = api_instance.list_namespaced_pod(namespace=namespace, label_selector=f"job-name={name}")
-
-            #print(f"GOT SOME PODS FOR JOB: {name}")
-            for pod in job_pods.items:
-                print(pod)
-
-                # for each container in pod
-                # get container name + error code
-                for container_status in pod.status.container_statuses:
-                    tracepusher_cmd.append(f"container-{container_status.name}-reason={container_status.state.terminated.reason}")
-                    tracepusher_cmd.append(f"container-{container_status.name}-exitcode={container_status.state.terminated.exit_code}")
-                    tracepusher_cmd.append(f"container-{container_status.name}-message={container_status.state.terminated.message}")
-                
-            # Call tracepusher
-            subprocess.call(tracepusher_cmd)
 
 # Happens once when a user
 # Applies a kind: JobTracer CR
