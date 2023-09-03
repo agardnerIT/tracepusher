@@ -38,10 +38,13 @@ rules:
   verbs: ["create"]
 - apiGroups: ["tracers.tracepusher.github.io"]
   resources: ["jobtracers"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch"]
 - apiGroups: ["batch"]
   resources: ["jobs"]
-  verbs: ["get", "list", "watch"]
+  verbs: ["list", "watch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "watch"]
 ---
 apiVersion: v1
 kind: ServiceAccount
