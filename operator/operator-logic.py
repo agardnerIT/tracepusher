@@ -19,7 +19,7 @@ namespaces_to_trace = []
 @kopf.on.startup()
 def initialise_operator(logger, **kwargs):
 
-    logger.info("+"*20)
+    logger.info("#"*30)
 
     try:
         configuration = config.load_incluster_config()   
@@ -46,9 +46,12 @@ def initialise_operator(logger, **kwargs):
                 })
 
                 logger.info(f"Print List: {namespaces_to_trace}")
-                logger.info('>'*10)
+                logger.info('#'*30)
         except ApiException as e:
             logger.info("Exception when calling CustomObjectsApi->list_cluster_custom_object: %s\n" % e)
+
+def get_jobs_to_track_keys():
+    return [ item['key'] for item in jobs_to_process ]
 
 def get_namespace_object(namespace):
     return next((item for item in namespaces_to_trace if item['namespace']==namespace), None)
@@ -93,14 +96,34 @@ def delete_job(name, namespace):
     if job_to_delete is not None:
         jobs_to_process.remove(job_to_delete)
 
-def call_tracepusher(tracepusher_args):
+def call_tracepusher(tracepusher_args, logger):
 
     full_cmd = ['python3', 'tracepusher.py'] + tracepusher_args
 
-    print(f"TP ARGS: {tracepusher_args}")
+    logger.info(f"TP ARGS: {tracepusher_args}")
     
     # Call tracepusher
     subprocess.call(full_cmd)
+
+# Kopf Filter
+# Custom filter to only react to new events
+# Ignoring those which happened prior to operator
+# Startup
+def is_new_event(event, **_):
+    if event['type'] is None: return False
+    else: return True
+
+# Kopf filter
+# Return true if Pod was spawned by a job
+# ie. has a "job-name" label
+def is_pod_spawned_by_job(event, **_):
+    if event['object']['kind'] == "Pod" and "job-name" in event['object']['metadata']['labels']: return True
+    return False
+
+# Kopf filter
+# Only process events without finalizers
+def has_no_finalizers(event, **_):
+    if "finalizers" in event['object']['metadata']: return False
 
 # type = "job" | "container"
 def get_tz_aware_start_finish_times(object, type):
@@ -145,102 +168,93 @@ def get_tz_aware_start_finish_times(object, type):
     return workload_start_time, workload_end_time, duration_seconds
 
 
-@kopf.on.event('pods')
+@kopf.on.event(
+    'pods',
+    annotations={"tracepusher/ignore": kopf.ABSENT},
+    when=kopf.all_([is_new_event, is_pod_spawned_by_job, has_no_finalizers]))
 def on_update_pod(event, spec, name, namespace, logger, **kwargs):
-    global jobs_to_process
-
-    logger.info(event)
-    logger.info("-"*50)
 
     # If pod is being deleted, ignore
     # Do not send a trace for a pod deletion
-    if event["type"] == "DELETED":
-        logger.info(f"!! Got a deleted pod")
-        return
+    if event["type"] == "DELETED": return
 
-    # If this pod was spawned by a job, proceed
-    if "job-name" in event['object']['metadata']['labels']:
+    job_name = event['object']['metadata']['labels']['job-name']
+
+    # Make composite key of job name + namespace
+    # This is used to lookup the jobs the Operator SHOULD track
+    job_key = f"{job_name}/{namespace}"
+
+    # Skip jobs that should not be processed
+    job_keys_to_track = get_jobs_to_track_keys()
+    logger.info(f"Job Keys: {job_keys_to_track}")
+    if job_key not in job_keys_to_track: return
+
+    if event['object']['status']['phase'] == "Succeeded" or event['object']['status']['phase'] == "Failed":
+
+        job_obj_from_tracker_list = get_job_to_process_object(job_key)
+        if job_obj_from_tracker_list is None:
+            logger.error(f"No job in jobs_to_process list for job_key {job_key}. Error. Investigate!")
+            return
+        job_main_trace_id = job_obj_from_tracker_list['main_trace_id']
+        job_main_span_id = job_obj_from_tracker_list['main_span_id']
+
         job_name = event['object']['metadata']['labels']['job-name']
 
-        # Make composite key of job name + namespace
-        # This is used to lookup the jobs the Operator SHOULD track
-        job_key = f"{job_name}/{namespace}"
+        container_statuses = event['object']['status']['containerStatuses']
+        for container_status in container_statuses:
 
-        # Skip jobs that should not be processed
-        job_keys_to_track = [ item['key'] for item in jobs_to_process ]
-        if job_key not in job_keys_to_track: return
+            container_span_status = "OK"
 
-        if event['object']['status']['phase'] == "Succeeded" or event['object']['status']['phase'] == "Failed":
+            container_name = container_status['name']
+            container_exit_code = container_status['state']['terminated']['exitCode']
+            container_message = ""
+            # TODO: This is too presumptive
+            # Let users annotate to give their own success code
+            if container_exit_code != 0: container_span_status = "Error"
 
-            job_obj_from_tracker_list = get_job_to_process_object(job_key)
-            if job_obj_from_tracker_list is None:
-                logger.error(f"No job in jobs_to_process list for job_key {job_key}. Error. Investigate!")
-                return
-            job_main_trace_id = job_obj_from_tracker_list['main_trace_id']
-            job_main_span_id = job_obj_from_tracker_list['main_span_id']
+            container_exit_reason = container_status['state']['terminated']['reason']
+            container_start_time, container_end_time, container_duration = get_tz_aware_start_finish_times(container_status, "container")
 
-            job_name = event['object']['metadata']['labels']['job-name']
+            if "message" in container_status['state']['terminated']:
+                container_message = container_status['state']['terminated']['message']
+            
+            # Generate a unique span ID for this container
+            # Link to main using trace_id and parent_span_id
+            container_span_id = secrets.token_hex(8)
 
-            # Only send main trace when finalizers
-            # are all done
-            # (ie. no finalizers left in JSON)
-            # In other words, skip if finalizers remain
-            if "finalizers" in event['object']['metadata']:
-                return
+            # Call tracepusher
+            tracepusher_args = [
+                "-ep",
+                job_obj_from_tracker_list['collector_endpoint'],
+                "-sen",
+                "k8s",
+                "-spn",
+                container_name,
+                "-dur",
+                f"{container_duration}",
+                "--span-status",
+                container_span_status,
+                "--time-shift",
+                "true",
+                "--trace-id",
+                job_main_trace_id,
+                "--parent-span-id",
+                job_main_span_id,
+                "-spnattrs",
+                "type=container",
+                f"namespace={namespace}",
+                f"exit_code={container_exit_code}",
+                f"reason={container_exit_reason}",
+                f"message={container_message}"
+            ]
+            call_tracepusher(tracepusher_args=tracepusher_args, logger=logger)
 
-            container_statuses = event['object']['status']['containerStatuses']
-            for container_status in container_statuses:
-
-                container_span_status = "OK"
-
-                container_name = container_status['name']
-                container_exit_code = container_status['state']['terminated']['exitCode']
-                container_message = ""
-                # TODO: This is too presumptive
-                # Let users annotate to give their own success code
-                if container_exit_code != 0:
-                    container_span_status = "Error"
-
-                container_exit_reason = container_status['state']['terminated']['reason']
-                container_start_time, container_end_time, container_duration = get_tz_aware_start_finish_times(container_status, "container")
-
-                if "message" in container_status['state']['terminated']:
-                    container_message = container_status['state']['terminated']['message']
-                
-                # Generate a unique span ID for this container
-                # Link to main using trace_id and parent_span_id
-                container_span_id = secrets.token_hex(8)
-
-                # Call tracepusher
-                tracepusher_args = [
-                    "-ep",
-                    job_obj_from_tracker_list['collector_endpoint'],
-                    "-sen",
-                    "k8s",
-                    "-spn",
-                    container_name,
-                    "-dur",
-                    f"{container_duration}",
-                    "--span-status",
-                    container_span_status,
-                    "--time-shift",
-                    "true",
-                    "--trace-id",
-                    job_main_trace_id,
-                    "--parent-span-id",
-                    job_main_span_id,
-                    "-spnattrs",
-                    "type=container",
-                    f"namespace={namespace}",
-                    f"exit_code={container_exit_code}",
-                    f"reason={container_exit_reason}",
-                    f"message={container_message}"
-                ]
-                call_tracepusher(tracepusher_args=tracepusher_args)
-
-
-# This happens on every change event for a job
-@kopf.on.event('job')
+# This happens on every change event for jobs
+# That are NOT annotated with "tracepusher/ignore"
+@kopf.on.event(
+    'job',
+    annotations={"tracepusher/ignore": kopf.ABSENT},
+    when=is_new_event)
 def on_event_job(event, spec, name, namespace, logger, **kwargs):
 
     tracker_details = get_namespace_object(namespace)
@@ -249,18 +263,6 @@ def on_event_job(event, spec, name, namespace, logger, **kwargs):
         # Return quickly and do not process further
         logger.info(f"Did not find tracker_details in list. We are not configured to track: {namespace}")
         logger.info(f"tracker list is: {namespaces_to_trace}")
-        return
-
-    # Use this list to trace the jobs that SHOULD be processed
-    global jobs_to_process
-
-    # If job is annotated
-    # with
-    # annotations:
-    #   tracepusher: "ignore"
-    # Skip processing
-    if "tracepusher/ignore" in event['object']['metadata']['annotations'] and event['object']['metadata']['annotations']['tracepusher/ignore'].lower() == "true":
-        logger.info("Job is annotated. Will ignore.")
         return
     
     # If job is deleted
@@ -305,6 +307,7 @@ def on_event_job(event, spec, name, namespace, logger, **kwargs):
         # If this is None, the Job existed before the operator started
         # So the list could be empty. Add it now
         if job_to_update is None:
+            logger.info("Adding job: {name} to WILL PROCESS list.")
             add_job_to_toprocess_list(name=name,namespace=namespace,collector_endpoint=collector_endpoint_to_set, logger=logger)
         else:
             update_job(name=name, namespace=namespace, collector_endpoint=collector_endpoint_to_set, logger=logger)
@@ -391,7 +394,7 @@ def on_event_job(event, spec, name, namespace, logger, **kwargs):
                 f"job_message={job_message}",
                 f"job_reason={job_reason}"
             ]
-        call_tracepusher(tracepusher_args=tracepusher_args)
+        call_tracepusher(tracepusher_args=tracepusher_args, logger=logger)
 
 
 # Whenever a JobTracer object
@@ -419,7 +422,7 @@ def on_create_jobtracer(spec, name, namespace, logger, **kwargs):
         existing_tracker_object['spec'] = spec
     
     logger.info(namespaces_to_trace)
-    logger.info("------------")
+    logger.info("-"*30)
 
 # A JobTracer has been deleted
 # Remove from the list
@@ -433,3 +436,4 @@ def on_delete_jobtracer(spec, name, namespace, logger, **kwargs):
         logger.info(f"tracking list before remove: {namespaces_to_trace}")
         namespaces_to_trace.remove(existing_tracker_object)
     logger.info(f"tracking list after remove: {namespaces_to_trace}")
+    logger.info("+"*30)
