@@ -100,6 +100,8 @@ kind: Job
 metadata:
   name: pi
   namespace: default
+  # Override the JobTracer namespace defaults
+  # Per Job with these annotations
   #annotations:
   #  tracepusher/ignore: "true"
   #  tracepusher/collector: "http://example.com:4318"
