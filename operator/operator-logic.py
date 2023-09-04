@@ -124,6 +124,7 @@ def is_pod_spawned_by_job(event, **_):
 # Only process events without finalizers
 def has_no_finalizers(event, **_):
     if "finalizers" in event['object']['metadata']: return False
+    return True
 
 # type = "job" | "container"
 def get_tz_aware_start_finish_times(object, type):
