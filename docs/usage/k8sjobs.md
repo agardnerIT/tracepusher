@@ -1,4 +1,4 @@
-## Trace Kubernetes Jobs and CronJobs with tracepusher
+# Trace Kubernetes Jobs and CronJobs with tracepusher
 
 ![Trace Kubernetes Jobs with tracepusher](assets/tracepusher-k8s-jobs.png)
 
