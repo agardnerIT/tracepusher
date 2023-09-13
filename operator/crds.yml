@@ -27,6 +27,11 @@ spec:
                 collectorEndpoint:
                   type: string
                   default: ""
+      additionalPrinterColumns:
+      - name: "Collector Endpoint"
+        type: string
+        description: "Default collector endpoint for this JobTracer"
+        jsonPath: .spec.collectorEndpoint
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -38,13 +43,10 @@ rules:
   verbs: ["create"]
 - apiGroups: ["tracers.tracepusher.github.io"]
   resources: ["jobtracers"]
-  verbs: ["get", "list", "watch"]
+  verbs: ["*"]
 - apiGroups: ["batch"]
   resources: ["jobs"]
-  verbs: ["list", "watch"]
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["list", "watch"]
+  verbs: ["get", "list", "watch"]
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -84,33 +86,4 @@ spec:
       serviceAccountName: jobtracer-service-account
       containers:
       - name: jobtracer-operator
-        image: gardnera/jobtracer-operator:dev
-        imagePullPolicy: Always
----
-apiVersion: tracers.tracepusher.github.io/v1
-kind: JobTracer
-metadata:
-  name: tracer
-  namespace: default
-spec:
-  collectorEndpoint: "http://your-collector.namespace.svc.cluster.local:4318"
----
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: pi
-  namespace: default
-  # Override the JobTracer namespace defaults
-  # Per Job with these annotations
-  #annotations:
-  #  tracepusher/ignore: "true"
-  #  tracepusher/collector: "http://example.com:4318"
-spec:
-  template:
-    spec:
-      containers:
-      - name: pi
-        image: perl:5.34.0
-        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
-      restartPolicy: Never
-  backoffLimit: 0
+        image: gardnera/tracepusher:operator-v0.1.0
