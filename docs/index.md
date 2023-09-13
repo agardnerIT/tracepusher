@@ -53,4 +53,5 @@ See the following pages for advanced usage and reference information for the fla
 - [Span time shifting](reference/time-shifting.md)
 - [Span attributes and span attribute types](reference/span-attribute-types.md)
 - [Span events](reference/span-events.md)
+- [Span status](reference/span-status.md)
 - [tracepusher flag reference pages](reference/index.md)

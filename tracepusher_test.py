@@ -210,3 +210,35 @@ def test_check_one_valid_one_invalid_span_attribute():
     assert output.returncode == 0
     assert "'droppedAttributesCount': 1" in output.stdout
     assert "'intValue': '23'" in output.stdout
+
+# Check that (by default) span
+# has status of OK
+def test_check_span_status_ok_when_not_set():
+    args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true"
+    output = run_tracepusher(args)
+    assert output.returncode == 0
+    assert "'status': {'code': 1}" in output.stdout
+
+# Check that span has status of OK
+# When explicitly set
+def test_check_span_status_ok_when_set():
+    args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --span-status OK"
+    output = run_tracepusher(args)
+    assert output.returncode == 0
+    assert "'status': {'code': 1}" in output.stdout
+
+# Check that span has status of ERROR
+# When explicitly set
+def test_check_span_status_error_when_set():
+    args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --span-status ERROR"
+    output = run_tracepusher(args)
+    assert output.returncode == 0
+    assert "'status': {'code': 2}" in output.stdout
+
+# Check that span has status of UNSET
+# When set to something invalid / random
+def test_check_span_status_unset_when_set():
+   args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --span-status ABC123"
+   output = run_tracepusher(args)
+   assert output.returncode == 0
+   assert "'status': {'code': 0}" in output.stdout
