@@ -1,8 +1,12 @@
 ## Use tracepusher in various contexts
 
+### Trace Kubernetes Jobs and CronJobs
+
+See [trace Kubernetes Jobs and Cronjobs](k8sjobs.md) for more information.
+
 ### Standalone Binary
 
-For more, this will be the preferred way to run tracepusher.
+For most, this will be the preferred way to run tracepusher.
 
 Download the [relevant binary from the releases page on GitHub](https://github.com/agardnerit/tracepusher/releases/latest) and execute.
 
