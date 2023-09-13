@@ -24,13 +24,20 @@ This defines the defaults for that namespace.
 
 You can override the details on a per job basis.
 
-For example, to trace all `Jobs` in the default namespace, download this file, modify the collector endpoint to point to your collector 
-
 ```shell
-wget https://raw.githubusercontent.com/agardnerIT/tracepusher/main/samples/jobtraceroperator/jobtracer.yml
-# Modify spec.collectorEndpoint
-kubectl apply -f jobtracer.yaml
+cat <<EOF | kubectl create -f -
+---
+apiVersion: tracers.tracepusher.github.io/v1
+kind: JobTracer
+metadata:
+  name: tracer
+  namespace: default
+spec:
+  collectorEndpoint: "http://your-collector.namespace.svc.cluster.local:4318"
+EOF
 ```
+
+You can now `kubectl get jobtracers`.
 
 ### 3. Create a Job or CronJob
 
@@ -60,3 +67,33 @@ EOF
 ```
 
 Note the optional annotations. If set, these override the `JobTracer` settings.
+
+### Example 2: A Multi Container Job
+
+tracepusher works with multi container jobs too:
+
+```shell
+cat <<EOF | kubectl create -f -
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi-multicontainer
+  namespace: default
+  #annotations:
+  #  tracepusher/ignore: "true"
+  #  tracepusher/collector: "http://example.com:4318"
+spec:
+  template:
+    spec:
+      containers:
+      - name: first
+        image: perl:5.34.0
+        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+      - name: second
+        image: perl:5.34.0
+        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(1000)"]
+      restartPolicy: Never
+  backoffLimit: 0
+EOF
+```
