@@ -1,4 +1,4 @@
-## Span Kind
+## Span Status
 
 The optional flag `-ss` or `--span-status` allows users to specify the span status.
 
@@ -6,7 +6,7 @@ If not specified, tracepusher assumes an `OK` status.
 
 For reference, these map to values of `0` (Unset), `1` (OK) or `2` (Error) according to the [OpenTelemetry specification](https://github.com/open-telemetry/opentelemetry-proto/blob/main/opentelemetry/proto/trace/v1/trace.proto#L270-#L278).
 
-### Valid Span Types
+### Valid Span Statuses
 
 These are case insensitive:
 
