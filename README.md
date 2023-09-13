@@ -14,6 +14,7 @@ If you like tracepusher and want to do the same thing with logs, check out [logp
 
 # Uses
 
+- [Trace Kubernetes Jobs and Cronjobs with OpenTelemetry](https://agardnerit.github.io/tracepusher/usage/k8sjobs/)
 - [Trace CICD Pipelines with OpenTelemetry](samples/gitlab/README.md)
 - [Trace shell scripts with OpenTelemetry](samples/script.sh)
 - [Trace Helm with OpenTelemetry](https://github.com/agardnerit/helm-trace)
