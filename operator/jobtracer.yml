@@ -1,0 +1,8 @@
+---
+apiVersion: tracers.tracepusher.github.io/v1
+kind: JobTracer
+metadata:
+  name: tracer
+  namespace: default
+spec:
+  collectorEndpoint: "http://your-collector.namespace.svc.cluster.local:4318"
