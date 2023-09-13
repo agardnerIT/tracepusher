@@ -1,5 +1,7 @@
 ## Trace Kubernetes Jobs and CronJobs with tracepusher
 
+![Trace Kubernetes Jobs with tracepusher](assets/tracepusher-k8s-jobs.png)
+
 Install the tracepusher job operator to automatically generate OpenTelemetry traces for any `Job` and `CronJobs` on the cluster.
 
 ### Prerequisites
