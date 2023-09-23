@@ -23,7 +23,7 @@ or
 For example, to push an event that should be denoted at 100 milliseconds _after_ the span start time, where the event name is `eventA`, the key is `feature_flag.key`, the value is `hexColor` and the event value type (implied) is `stringValue`:
 
 ```
-python ~/tracepusher/tracepusher.py \
+./tracepusher \
   --endpoint http://localhost:4318 \
   --service-name serviceA \
   --span-name span1 \
@@ -34,7 +34,7 @@ python ~/tracepusher/tracepusher.py \
 To send an event that should be attached at the beginning of the span, with a key of `userID` and a type set as an integer:
 
 ```
-python ~/tracepusher/tracepusher.py \
+./tracepusher \
   --endpoint http://localhost:4318 \
   --service-name serviceA \
   --span-name span1 \
