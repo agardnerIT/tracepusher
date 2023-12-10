@@ -189,6 +189,8 @@ parser.add_argument('-spnattrs', '--span-attributes', required=False, nargs='*')
 parser.add_argument('-spnevnts', '--span-events', required=False, nargs='*')
 parser.add_argument('-sk', '--span-kind', required=False, default="INTERNAL")
 parser.add_argument('-ss', '--span-status', required=False, default="OK")
+parser.add_argument('-insec', '--insecure', required=False, default="False")
+
 
 args = parser.parse_args()
 
@@ -205,6 +207,7 @@ trace_id = args.trace_id
 span_id = args.span_id
 span_kind = args.span_kind
 span_status = get_span_status_int(args.span_status)
+allow_insecure = args.insecure
 
 span_attributes_list, dropped_attribute_count = get_span_attributes_list(args.span_attributes)
 span_kind = process_span_kind(span_kind)
@@ -236,6 +239,28 @@ if parent_span_id != "":
   print(f"> Pushing a child (sub) span with parent span id: {parent_span_id}")
   HAS_PARENT_SPAN = True
 
+# Prior to v1.0
+# This flag will ONLY print a soft WARNING
+# If the flag is False (explicitly or omitted)
+# a warning is given that in v1.0 calls to http:// endpoints
+# will FAIL if "--insecure true" is NOT set
+#
+# In other words, prior to v1.0 no breaking change
+# v1.0 and above, if a user wishes to send to an http:// endpoint
+# --insecure true MUST be set
+#
+# Best practice: Start setting this flag now!
+
+# First convert to boolean
+ALLOW_INSECURE = False
+if allow_insecure.lower() == "true":
+  ALLOW_INSECURE = True
+
+# TODO: Adjust this error message for >=v1.0
+# From v1.0 make this WARN only appear in DEBUG_MODE
+if not ALLOW_INSECURE:
+  print("WARN: --insecure flag is omitted or is set to false. Prior to v1.0 tracepusher still works as expected (span is sent). In v1.0 and above, you MUST set '--insecure true' if you want to send to an http:// endpoint. See https://github.com/agardnerIT/tracepusher/issues/78")
+
 if DEBUG_MODE:
   print(f"Endpoint: {endpoint}")
   print(f"Service Name: {service_name}")
@@ -251,6 +276,12 @@ if DEBUG_MODE:
   print(f"Dropped Attribute Count: {dropped_attribute_count}")
   print(f"Span Kind: {span_kind}")
   print(f"Span Status: {span_status}")
+  print(f"Allow insecure endpoints: {allow_insecure}")
+
+# disable until v1.0
+#if endpoint.startswith("http://") and not ALLOW_INSECURE:
+#  print("ERROR: Endpoint is http:// (insecure). You MUST set '--insecure true'. Span has NOT been sent.")
+#  exit(1)
 
 # Generate random chars for trace and span IDs
 # of 32 chars and 16 chars respectively

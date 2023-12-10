@@ -242,3 +242,34 @@ def test_check_span_status_unset_when_set():
    output = run_tracepusher(args)
    assert output.returncode == 0
    assert "'status': {'code': 0}" in output.stdout
+
+# Check that --allow-insecure false
+# When flag is omitted
+# Also check that WARN message
+# TODO: Revisit this for v1.0
+def test_check_insecure_flag_false_when_unset():
+   args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true"
+   output = run_tracepusher(args)
+   assert output.returncode == 0
+   assert "allow insecure endpoints: false" or "" in output.stdout.lower()
+   assert "WARN: --insecure flag is omitted or is set to false. Prior to v1.0 tracepusher still works as expected (span is sent). In v1.0 and above, you MUST set '--insecure true' if you want to send to an http:// endpoint. See https://github.com/agardnerIT/tracepusher/issues/78" in output.stdout
+
+# Check that --allow-insecure flag false
+# When flag is explicitly set
+# TODO: Revisit this for v1.0
+def test_check_insecure_flag_false_when_set():
+   args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --insecure false"
+   output = run_tracepusher(args)
+   assert output.returncode == 0
+   assert "allow insecure endpoints: false" in output.stdout.lower()
+   assert "WARN: --insecure flag is omitted or is set to false. Prior to v1.0 tracepusher still works as expected (span is sent). In v1.0 and above, you MUST set '--insecure true' if you want to send to an http:// endpoint. See https://github.com/agardnerIT/tracepusher/issues/78" in output.stdout
+
+# Check that --allow-insecure flag false
+# When flag is explicitly set
+# TODO: Revisit this for v1.0
+def test_check_insecure_flag_true_when_set():
+   args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --insecure True"
+   output = run_tracepusher(args)
+   assert output.returncode == 0
+   assert "allow insecure endpoints: true" in output.stdout.lower()
+   #assert "WARN: --insecure flag is omitted or is set to false. Prior to v1.0 tracepusher still works as expected (span is sent). In v1.0 and above, you MUST set '--insecure true' if you want to send to an http:// endpoint. See https://github.com/agardnerIT/tracepusher/issues/78" in output.stdout
