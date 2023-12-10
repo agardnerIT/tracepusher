@@ -91,6 +91,16 @@ Default is `OK`.
 
 See [span status](docs/reference/span-status.md) page.
 
+## Insecure flag
+
+>> Only supported with `v0.9.0` and above.
+
+tracepusher users can set `--insecure [false|true]` to allow sending spans to `http://` vs. `https://` endpoints.
+
+Defaults to `false` but behaviour differs by version.
+
+See [insecure flag](docs/reference/insecure-flag.md) for more info.
+
 ## Spin up OpenTelemetry Collector
 
 See [OpenTelemetry Collector configuration](https://agardnerit.github.io/tracepusher/reference/otel-col)
