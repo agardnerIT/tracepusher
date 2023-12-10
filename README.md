@@ -93,7 +93,7 @@ See [span status](docs/reference/span-status.md) page.
 
 ## Insecure flag
 
->> Only supported with `v0.9.0` and above.
+> Only supported with `v0.9.0` and above.
 
 tracepusher users can set `--insecure [false|true]` to allow sending spans to `http://` vs. `https://` endpoints.
 
