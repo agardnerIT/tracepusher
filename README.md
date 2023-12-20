@@ -119,7 +119,17 @@ See [FAQ](https://agardnerit.github.io/tracepusher/faq).
 
 See [Breaking changes](https://agardnerit.github.io/tracepusher/breaking-changes)
 
-# Building
+# Building Standalone Binaries
+
+Note: PyInstaller is platform dependent. You must build on whatever platform you wish to run tracepusher on.
+
+When tracepusher is released, the [build_standalone_binaries.yml workflow](.github/workflows/build_standalone_binaries.yml) completes this step and uploads the resulting binaries to S3 where we (currently manually) attach each generated binary to the release notes.
+
+```
+python -m PyInstaller --onefile tracepusher.py
+```
+
+# Building Docker Image
 
 Run all build commands from the root directory:
 
@@ -128,7 +138,7 @@ docker buildx build --platform linux/arm64,linux/amd64 --push -t tracepusher:dev
 docker buildx build --platform linux/arm64,linux/amd64 --push -t tracepusher:dev -f ./docker/standard/Dockerfile .
 ```
 
-# Install Requirement
+# Install Requirements
 
 For Non-Developers
 ```
