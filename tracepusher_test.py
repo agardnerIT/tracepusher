@@ -272,4 +272,3 @@ def test_check_insecure_flag_true_when_set():
    output = run_tracepusher(args)
    assert output.returncode == 0
    assert "allow insecure endpoints: true" in output.stdout.lower()
-   #assert "WARN: --insecure flag is omitted or is set to false. Prior to v1.0 tracepusher still works as expected (span is sent). In v1.0 and above, you MUST set '--insecure true' if you want to send to an http:// endpoint. See https://github.com/agardnerIT/tracepusher/issues/78" in output.stdout
