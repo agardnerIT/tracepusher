@@ -4,7 +4,7 @@
 
 Default: `false`
 
-The optional `-ins [false|true]` or `--insecure [false|true]` flag exists to encourage "secure by default" practices by encouraging the sending of span only to `https://` endpoints. However, tracepusher **does** still work with `http://` endpoints.
+The optional `-insec [false|true]` or `--insecure [false|true]` flag exists to encourage "secure by default" practices by encouraging the sending of span only to `https://` endpoints. However, tracepusher **does** still work with `http://` endpoints.
 
 The `--insecure` flag affects whether or not tracepusher will connect to insecure `http://` endpoints or not.
 
