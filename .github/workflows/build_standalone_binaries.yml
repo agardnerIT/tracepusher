@@ -89,4 +89,3 @@ jobs:
       - name: "Upload Binary to S3"
         run: |
           aws s3 cp dist/tracepusher_darwin_x64 s3://${{ secrets.BUCKET_NAME }}/tracepusher_darwin_x64_${{ inputs.version }}
-# TODO: Add ARM for MacOS runner when this is available: https://github.com/github/roadmap/issues/528
