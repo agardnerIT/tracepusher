@@ -24,6 +24,10 @@ If you like tracepusher and want to do the same thing with logs, check out [logp
 
 See [try tracepusher in-browser without installation](https://agardnerit.github.io/tracepusher/try/).
 
+## Standalone Binary
+
+See [download and use tracepusher as a standalone binary](https://agardnerit.github.io/tracepusher/usage/standalone.md)
+
 ## Python3 Usage
 
 See [use tracepusher as a Python script](https://agardnerit.github.io/tracepusher/usage/python).
