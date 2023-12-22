@@ -281,7 +281,7 @@ if DEBUG_MODE:
 # disable until v1.0
 #if endpoint.startswith("http://") and not ALLOW_INSECURE:
 #  print("ERROR: Endpoint is http:// (insecure). You MUST set '--insecure true'. Span has NOT been sent.")
-#  exit(1)
+#  sys.exit(1)
 
 # Generate random chars for trace and span IDs
 # of 32 chars and 16 chars respectively
