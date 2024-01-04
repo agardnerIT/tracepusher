@@ -60,7 +60,7 @@ jobs:
         run: "mv har-to-otel/dist/har-to-otel har-to-otel/dist/har-to-otel_linux_x64"
       - name: "Upload Binary to S3"
         run: |
-          aws s3 cp har-to-otel/dist/har-to-otel_linux_x64 s3://${{ secrets.BUCKET_NAME }}/har-to-otel_linux_x64_${{ inputs.version }}
+          aws s3 cp dist/har-to-otel_linux_x64 s3://${{ secrets.BUCKET_NAME }}/har-to-otel_linux_x64_${{ inputs.version }}
   mac_os_build_binary:
     name: "[MacOS] Build Self Contained Binary"
     runs-on: macos-12
@@ -88,4 +88,4 @@ jobs:
         run: "mv har-to-otel/dist/har-to-otel har-to-otel/dist/har-to-otel_darwin_x64"
       - name: "Upload Binary to S3"
         run: |
-          aws s3 cp har-to-otel/dist/har-to-otel_darwin_x64 s3://${{ secrets.BUCKET_NAME }}/har-to-otel_darwin_x64_${{ inputs.version }}
+          aws s3 cp dist/har-to-otel_darwin_x64 s3://${{ secrets.BUCKET_NAME }}/har-to-otel_darwin_x64_${{ inputs.version }}
