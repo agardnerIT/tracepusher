@@ -29,10 +29,10 @@ jobs:
       - name: "Install Dependencies"
         run: pip install -r har-to-otel/requirements.txt
       - name: "Build Binary"
-        run: "python -m PyInstaller --onefile /har-to-otel/har-to-otel.py"
+        run: "python -m PyInstaller --onefile har-to-otel/har-to-otel.py"
       - name: "Upload Binary to S3"
         run: |
-          aws s3 cp /har-to-otel/dist/har-to-otel.exe s3://${{ secrets.BUCKET_NAME }}/har-to-otel_${{ inputs.version }}.exe
+          aws s3 cp har-to-otel/dist/har-to-otel.exe s3://${{ secrets.BUCKET_NAME }}/har-to-otel_${{ inputs.version }}.exe
   linux_x64_build_binary:
     name: "[LIN x64] Build Self Contained Binary"
     runs-on: ubuntu-20.04
@@ -53,14 +53,14 @@ jobs:
           python-version: '3.11.4'
           cache: 'pip'
       - name: "Install Dependencies"
-        run: pip install -r /har-to-otel/requirements.txt
+        run: pip install -r har-to-otel/requirements.txt
       - name: "Build Binary"
-        run: "python -m PyInstaller --onefile /har-to-otel/har-to-otel.py"
+        run: "python -m PyInstaller --onefile har-to-otel/har-to-otel.py"
       - name: "Rename file"
-        run: "mv /har-to-otel/dist/har-to-otel /har-to-otel/dist/har-to-otel_linux_x64"
+        run: "mv har-to-otel/dist/har-to-otel har-to-otel/dist/har-to-otel_linux_x64"
       - name: "Upload Binary to S3"
         run: |
-          aws s3 cp /har-to-otel/dist/har-to-otel_linux_x64 s3://${{ secrets.BUCKET_NAME }}/har-to-otel_linux_x64_${{ inputs.version }}
+          aws s3 cp har-to-otel/dist/har-to-otel_linux_x64 s3://${{ secrets.BUCKET_NAME }}/har-to-otel_linux_x64_${{ inputs.version }}
   mac_os_build_binary:
     name: "[MacOS] Build Self Contained Binary"
     runs-on: macos-12
@@ -81,11 +81,11 @@ jobs:
           python-version: '3.11.4'
           cache: 'pip'
       - name: "Install Dependencies"
-        run: pip install -r requirements.txt
+        run: pip install -r har-to-otel/requirements.txt
       - name: "Build Binary"
-        run: "python -m PyInstaller --onefile /har-to-otel/har-to-otel.py"
+        run: "python -m PyInstaller --onefile har-to-otel/har-to-otel.py"
       - name: "Rename file"
-        run: "mv /har-to-otel/dist/har-to-otel /har-to-otel/dist/har-to-otel_darwin_x64"
+        run: "mv har-to-otel/dist/har-to-otel har-to-otel/dist/har-to-otel_darwin_x64"
       - name: "Upload Binary to S3"
         run: |
-          aws s3 cp /har-to-otel/dist/har-to-otel_darwin_x64 s3://${{ secrets.BUCKET_NAME }}/har-to-otel_darwin_x64_${{ inputs.version }}
+          aws s3 cp har-to-otel/dist/har-to-otel_darwin_x64 s3://${{ secrets.BUCKET_NAME }}/har-to-otel_darwin_x64_${{ inputs.version }}
