@@ -32,7 +32,7 @@ jobs:
         run: "python -m PyInstaller --onefile har-to-otel/har-to-otel.py"
       - name: "Upload Binary to S3"
         run: |
-          aws s3 cp har-to-otel/dist/har-to-otel.exe s3://${{ secrets.BUCKET_NAME }}/har-to-otel_${{ inputs.version }}.exe
+          aws s3 cp dist/har-to-otel.exe s3://${{ secrets.BUCKET_NAME }}/har-to-otel_${{ inputs.version }}.exe
   linux_x64_build_binary:
     name: "[LIN x64] Build Self Contained Binary"
     runs-on: ubuntu-20.04
