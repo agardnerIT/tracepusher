@@ -56,5 +56,6 @@ See the following pages for advanced usage and reference information for the fla
 - [Span attributes and span attribute types](reference/span-attribute-types.md)
 - [Span events](reference/span-events.md)
 - [Span status](reference/span-status.md)
-- [Insecure Flag](reference/insecure-flag.md)
+- [Insecure flag](reference/insecure-flag.md)
+- [Start time flag](reference/start-time.md)
 - [tracepusher flag reference pages](reference/index.md)

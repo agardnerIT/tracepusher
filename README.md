@@ -93,7 +93,7 @@ tracepusher users can set the status of the span (`OK`, `ERROR` or `UNSET`).
 
 Default is `OK`.
 
-See [span status](docs/reference/span-status.md) page.
+See [span status](https://agardnerit.github.io/tracepusher/reference/span-status) page.
 
 ## Insecure flag
 
@@ -103,7 +103,15 @@ tracepusher users can set `--insecure [false|true]` to allow sending spans to `h
 
 Defaults to `false` but behaviour differs by version.
 
-See [insecure flag](docs/reference/insecure-flag.md) for more info.
+See [insecure flag](https://agardnerit.github.io/tracepusher/reference/insecure-flag) for more info.
+
+## Start Time
+
+> Only supported with `v0.10.0` and above.
+
+tracepusher users can (optionally) set the span start time using the `--start-time` flag. If unset, defaults to `now`.
+
+See [start time flag](https://agardnerit.github.io/tracepusher/reference/start-time-flag) for more info.
 
 ## Spin up OpenTelemetry Collector
 

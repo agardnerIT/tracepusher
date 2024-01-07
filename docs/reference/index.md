@@ -14,3 +14,4 @@
 - [Span Durations and Duration Types](duration-type.md)
 - [Span Status](span-status.md)
 - [Insecure flag](insecure-flag.md)
+- [Start Time flag](start-time-flag.md)
