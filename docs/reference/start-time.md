@@ -1,5 +1,7 @@
 ## Start Time
 
+> Introduced in v0.10.0
+
 The optional flag `-st` or `--start-time` allows users to specify the span start time.
 
 If not specified, tracepusher assumes a start time of `now`.
