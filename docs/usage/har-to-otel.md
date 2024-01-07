@@ -1,5 +1,7 @@
 # Chrome DevTools HAR File to OpenTelemetry Converter
 
+![tracepusher HAR to OpenTelemetry Converter](assets/har-to-otel.jpg)
+
 This tool converts a `.har` file to OpenTelemetry traces and sends them to an OpenTelemetry collector using tracepusher.
 
 ## Feedback Required!
