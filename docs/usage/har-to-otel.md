@@ -15,6 +15,8 @@ docker run \
   --insecure true
 ```
 
+(standalone binaries coming soon...)
+
 ### Optional flags
 
 If set, these are added as span attributes:
