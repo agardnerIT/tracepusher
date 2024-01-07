@@ -9,7 +9,7 @@ This tool converts a `.har` file to OpenTelemetry traces and sends them to an Op
 ```
 docker run \
   --mount type=bind,source="$(pwd)",target=/files \
-  gardnera/har-to-otel:dev \
+  gardnera/har-to-otel:0.10.0 \
   -f /files/YOUR-HAR-FILE.har \
   -ep http://host.docker.internal:4318 \
   --insecure true
