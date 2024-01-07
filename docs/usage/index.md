@@ -25,3 +25,9 @@ Useful for running CI pipelines in container images.
 ### Python
 
 [Run tracepusher as a Python script](python.md).
+
+### HAR File to OpenTelemetry Converter
+
+This utility takes a  `.har` file (HTTP Archive) as input, converts to OpenTelemetry and sends to the collector.
+
+Go here for the [HAR file to OpenTelemetry converter](har-to-otel.md)
