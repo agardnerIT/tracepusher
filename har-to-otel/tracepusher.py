@@ -341,15 +341,13 @@ if DEBUG_MODE:
 
 if trace_id == "":
   trace_id = secrets.token_hex(16)
-# TODO: Re-enable
-# if len(trace_id) != 32:
-#   sys.exit("Error: trace_id should be 32 characters long!")
+if len(trace_id) != 32:
+  sys.exit("Error: trace_id should be 32 characters long!")
 
 if span_id == "":
   span_id = secrets.token_hex(8)
-# TODO: Re-enable
-# if len(span_id) != 16:
-#   sys.exit("Error: span_id should be 16 characters long!")
+if len(span_id) != 16:
+  sys.exit("Error: span_id should be 16 characters long!")
 
 if DEBUG_MODE:
   print(f"Trace ID: {trace_id}")
