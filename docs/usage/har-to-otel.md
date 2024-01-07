@@ -4,12 +4,6 @@
 
 This tool converts a `.har` file to OpenTelemetry traces and sends them to an OpenTelemetry collector using tracepusher.
 
-## Feedback Required!
-
-If you use this, please provide feedback (good or bad) on [this issue](https://github.com/agardnerIT/tracepusher/issues/72).
-
-When the tool is confirmed as stable, standalone binaries will be built.
-
 ## Usage
 
 ```
