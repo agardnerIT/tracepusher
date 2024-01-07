@@ -8,6 +8,7 @@ nav:
     - Usage > Docker: usage/docker.md
     - Usage > CI: usage/ci.md
     - Usage > Kubernetes Jobs and CronJobs: usage/k8sjobs.md
+    - Usage > DevTools HAR File to OpenTelemetry Converter: usage/har-to-otel.md
     - Multi Span Traces: reference/multi-span-traces.md
     - Reference Pages: reference/index.md
     - FAQ: faq.md
