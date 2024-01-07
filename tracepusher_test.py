@@ -195,15 +195,6 @@ def test_check_intValue_span_attribute():
     assert "'intValue': '23'" in output.stdout
 
 # Check sending multiple valid span attribute
-def test_check_intValue_span_attribute():
-    args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --span-attributes foo=bar userID=23=intValue"
-    output = run_tracepusher(args)
-    assert output.returncode == 0
-    assert "'droppedAttributesCount': 0" in output.stdout
-    assert "'stringValue': 'bar'" in output.stdout
-    assert "'intValue': '23'" in output.stdout
-
-# Check sending multiple valid span attribute
 def test_check_one_valid_one_invalid_span_attribute():
     args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --span-attributes foo=bar=dsd=ds userID=23=intValue"
     output = run_tracepusher(args)
@@ -272,3 +263,72 @@ def test_check_insecure_flag_true_when_set():
    output = run_tracepusher(args)
    assert output.returncode == 0
    assert "allow insecure endpoints: true" in output.stdout.lower()
+
+# Check that --trace-id abc123
+# Errors (as it should)
+# Because trace id "abc123" is too short
+def test_check_invalid_trace_length_fails_when_set():
+   args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --insecure True --trace-id abc123"
+   output = run_tracepusher(args)
+   assert output.returncode > 0
+   assert "Error: trace_id should be 32 characters long!" in output.stderr
+
+# Check that --span-id abc123
+# Errors (as it should)
+# Because span id "abc123" is too short
+def test_check_invalid_span_length_fails_when_set():
+   args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --insecure True --span-id abc123"
+   output = run_tracepusher(args)
+   assert output.returncode > 0
+   assert "Error: span_id should be 16 characters long!" in output.stderr
+
+# Check that an invalid start_time duration
+# warns and defaults to now
+def test_check_invalid_too_short_start_time_fails_when_set():
+    args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --start-time abc123"
+    output = run_tracepusher(args)
+    assert output.returncode == 0
+    assert "Got an explicit start time" in output.stdout
+    assert "WARN: --start-time was in an incorrect format. If providing a date/time it must be in UTC and end with uppercase 'Z'. eg. '2023-11-26T03:05:16.844Z'. Trace will be sent with start_time of now." in output.stdout
+
+# check that a 19 digit (invalid) start time
+# errors
+# eg. "2023-11-26T03:05:16"
+def test_check_invalid_19_digit_start_time_fails_when_set():
+    args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --start-time 2023-11-26T03:05:16"
+    output = run_tracepusher(args)
+    assert output.returncode == 0
+    assert "Got an explicit start time" in output.stdout
+    assert "WARN: --start-time was in an invalid format. Trace will be sent but start time will default to 'now'." in output.stdout
+    assert "Provided start time: 2023-11-26T03:05:16" in output.stdout
+    #assert "WARN: --start-time value was in an incorrect format. Valid formats: 1) 19 digit integer representing millis since epoch 2) '%Y-%m-%dT%H:%M:%S.%fZ' eg. '2023-11-26T03:05:16.844Z'. Trace will be send with start_time of now." in output.stdout
+
+# Check that a valid 19 digit start time succeeds
+def test_check_valid_19_digit_start_time_success():
+    args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --start-time 1704590804392761000"
+    output = run_tracepusher(args)
+    assert output.returncode == 0
+    assert "Got an explicit start time" in output.stdout
+    assert "Provided start time: 1704590804392761000" in output.stdout
+    assert "Start time: 1704590804392761000" in output.stdout
+
+# Check that an invalid datetime warns
+def test_check_invalid_19_digit_start_time_warns():
+    args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --start-time 2023-11-26T03:05:16AEST"
+    output = run_tracepusher(args)
+    assert output.returncode == 0
+    assert "Got an explicit start time" in output.stdout
+    assert "Provided start time: 2023-11-26T03:05:16AEST" in output.stdout
+    assert "WARN: --start-time was in an incorrect format. If providing a date/time it must be in UTC and end with uppercase 'Z'. eg. '2023-11-26T03:05:16.844Z'. Trace will be sent with start_time of now." in output.stdout
+
+# Check that a 19 digit (valid) start time
+# that also ends with Z (valid)
+# but doesn't logically make sense
+# warns and defaults to now()
+def test_check_invalid_19_digit_with_end_z_warns():
+    args = "-ep http://otelcollector:4317 -sen serviceA -spn spanOne -dur 2 --dry-run true --debug true --start-time 123456789012345678Z"
+    output = run_tracepusher(args)
+    assert output.returncode == 0
+    assert "Got an explicit start time" in output.stdout
+    assert "Provided start time: 123456789012345678Z" in output.stdout
+    assert "WARN: --start-time was in an invalid format. Trace will be sent but start time will default to 'now'." in output.stdout

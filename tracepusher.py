@@ -3,6 +3,7 @@ import requests
 import time
 import secrets
 import argparse
+import datetime
 
 # This script is very simple. It does the equivalent of:
 # curl -i -X POST http(s)://endpoint/v1/traces \
@@ -14,15 +15,23 @@ import argparse
 # python tracepusher.py -ep=http(s)://localhost:4318 -sen=serviceNameA -spn=spanX -dur=2
 #############################################################################
 
+# Modified from: https://stackoverflow.com/a/11111177/9997385
+def unix_time_millis(dt):
+    epoch = datetime.datetime.utcfromtimestamp(0)
+    # This looks odd but the .0f means no decimal places
+    # Then appending 000 makes the string 19 chars long like:
+    # 1700967916494000000
+    return '{:.0f}000'.format((dt - epoch).total_seconds() * 1000000)
+
 # Minimum
 # offsetInMillis=name=key=value
 # In which case:
-# - timestamp of event is + offset by milliseconds given in input from time_now
+# - timestamp of event is + offset by milliseconds given in input from start_time_nanos_since_epoch
 # - value type is assumed to be string
 #
 # offsetInMillis=name=key=value=valueType
 # 0=event1=userID=23=intValue
-def get_span_events_list(args, time_now):
+def get_span_events_list(args, start_time_nanos_since_epoch):
   
   event_list = []
   dropped_event_count = 0
@@ -64,7 +73,7 @@ def get_span_events_list(args, time_now):
     # calculate event time
     # millis to nanos
     offset_nanos = offset_millis * 1000000
-    event_time = time_now + offset_nanos
+    event_time = start_time_nanos_since_epoch + offset_nanos
 
     event_list.append({
        "timeUnixNano": event_time,
@@ -190,7 +199,7 @@ parser.add_argument('-spnevnts', '--span-events', required=False, nargs='*')
 parser.add_argument('-sk', '--span-kind', required=False, default="INTERNAL")
 parser.add_argument('-ss', '--span-status', required=False, default="OK")
 parser.add_argument('-insec', '--insecure', required=False, default="False")
-
+parser.add_argument('-st', '--start-time', required=False, default="")
 
 args = parser.parse_args()
 
@@ -208,6 +217,7 @@ span_id = args.span_id
 span_kind = args.span_kind
 span_status = get_span_status_int(args.span_status)
 allow_insecure = args.insecure
+start_time = args.start_time
 
 span_attributes_list, dropped_attribute_count = get_span_attributes_list(args.span_attributes)
 span_kind = process_span_kind(span_kind)
@@ -261,6 +271,47 @@ if allow_insecure.lower() == "true":
 if not ALLOW_INSECURE:
   print("WARN: --insecure flag is omitted or is set to false. Prior to v1.0 tracepusher still works as expected (span is sent). In v1.0 and above, you MUST set '--insecure true' if you want to send to an http:// endpoint. See https://github.com/agardnerIT/tracepusher/issues/78")
 
+# If user has explicitly provided a start time:
+# 1) It must be in the following format:
+#    2023-11-26T03:05:16.494Z
+#    yyyy-mm-ddThh:mm:ss.mssTZ
+# 3) Convert to millis since epoch
+# eg. 1700931916494
+# 4) Further converter to nanos (eg. + 9 zeros)
+# eg. 1700931916494000000
+
+HAS_START_TIME = False
+start_time_nanos_since_epoch = 0
+
+if start_time != "":
+    HAS_START_TIME = True
+    print("Got an explicit start time")
+    # The ONLY input formats tracepusher currently supports are:
+    # 1) A 19 digit string representing milliseconds since the epoch: eg. 1700967916494000000
+    # 2) "%Y-%m-%dT%H:%M:%S.%fZ" eg. "2023-11-26T03:05:16.844Z"
+
+    if len(start_time) == 19:
+        # Try to cast input to an int
+        # If an exception is caught, the user maybe tried to pass another 19 digit string like...
+        # "2023-11-26T03:05:16". This is NOT supported!
+        try:
+            start_time_nanos_since_epoch = int(start_time)
+        except:
+            HAS_START_TIME = False
+            print("WARN: --start-time was in an invalid format. Trace will be sent but start time will default to 'now'.")
+    else:
+        try:
+          if not start_time.endswith("Z"):
+            print("WARN: --start-time was in an incorrect format. If providing a date/time it must be in UTC and end with uppercase 'Z'. eg. '2023-11-26T03:05:16.844Z'. Trace will be sent with start_time of now.")
+            # The provided start time had an invalid value, so fallback to the trace having a start time of "now"
+            HAS_START_TIME = False
+          else:
+            start_time_nanos_since_epoch = unix_time_millis(datetime.datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S.%fZ'))
+        except:
+            print("WARN: --start-time value was in an incorrect format. Valid formats: 1) 19 digit integer representing millis since epoch 2) '%Y-%m-%dT%H:%M:%S.%fZ' eg. '2023-11-26T03:05:16.844Z'. Trace will be send with start_time of now.")
+            # The provided start time had an invalid value, so fallback to the trace having a start time of "now"
+            HAS_START_TIME = False
+
 if DEBUG_MODE:
   print(f"Endpoint: {endpoint}")
   print(f"Service Name: {service_name}")
@@ -277,6 +328,7 @@ if DEBUG_MODE:
   print(f"Span Kind: {span_kind}")
   print(f"Span Status: {span_status}")
   print(f"Allow insecure endpoints: {allow_insecure}")
+  print(f"Provided start time: {start_time}. Nanos since epoch: {start_time_nanos_since_epoch}")
 
 # disable until v1.0
 #if endpoint.startswith("http://") and not ALLOW_INSECURE:
@@ -312,24 +364,26 @@ if duration_type == "ms":
 elif duration_type == "s":
    duration_nanos = duration * 1000000000 # s to ns
 
-# get time now
-time_now = time.time_ns()
-# calculate future time by adding that many seconds
-time_future = time_now + duration_nanos
+if not HAS_START_TIME:
+    # get time now
+    start_time_nanos_since_epoch = time.time_ns()
 
-# shift time_now and time_future back by duration 
-if TIME_SHIFT:
-   time_now = time_now - duration_nanos
+# calculate future time by adding that many nanoseconds
+time_future = int(start_time_nanos_since_epoch) + duration_nanos
+
+# shift start_time_nanos_since_epoch and time_future back by duration 
+if not HAS_START_TIME and TIME_SHIFT:
+   start_time_nanos_since_epoch = start_time_nanos_since_epoch - duration_nanos
    time_future = time_future - duration_nanos
 
 if DEBUG_MODE:
    print(f"Time shifted? {TIME_SHIFT}")
-   print(f"Time now: {time_now}")
+   print(f"Start time: {start_time_nanos_since_epoch}")
    print(f"Time future: {time_future}")
 
 # Now that the right start / end time is available
 # process any span events
-span_events_list, dropped_event_count = get_span_events_list(args.span_events, time_now)
+span_events_list, dropped_event_count = get_span_events_list(args.span_events, start_time_nanos_since_epoch)
 
 if DEBUG_MODE:
    print("Printing Span Events List:")
@@ -361,7 +415,7 @@ trace = {
              "spanId": span_id,
              "name": span_name,
              "kind": span_kind,
-             "start_time_unix_nano": time_now,
+             "start_time_unix_nano": start_time_nanos_since_epoch,
              "end_time_unix_nano": time_future,
              "droppedAttributesCount": dropped_attribute_count,
              "attributes": span_attributes_list,
