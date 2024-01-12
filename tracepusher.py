@@ -5,6 +5,8 @@ import secrets
 import argparse
 import datetime
 
+TRACEPUSHER_VERSION="v0.10.0"
+
 # This script is very simple. It does the equivalent of:
 # curl -i -X POST http(s)://endpoint/v1/traces \
 # -H "Content-Type: application/json" \
@@ -200,6 +202,7 @@ parser.add_argument('-sk', '--span-kind', required=False, default="INTERNAL")
 parser.add_argument('-ss', '--span-status', required=False, default="OK")
 parser.add_argument('-insec', '--insecure', required=False, default="False")
 parser.add_argument('-st', '--start-time', required=False, default="")
+parser.add_argument('-v', '--version', action="version", version=TRACEPUSHER_VERSION)
 
 args = parser.parse_args()
 
