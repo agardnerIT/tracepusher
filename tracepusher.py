@@ -5,7 +5,7 @@ import secrets
 import argparse
 import datetime
 
-TRACEPUSHER_VERSION="v0.10.0"
+TRACEPUSHER_VERSION="0.10.0"
 
 # This script is very simple. It does the equivalent of:
 # curl -i -X POST http(s)://endpoint/v1/traces \
