@@ -143,7 +143,7 @@ def run_tracepusher(args=""):
         except:
             print("Exception caught running local tracepusher.py")
     else: # trying standalone tracepusher
-        print("Local tracepusher.py missing or < 0.10.0. Try path...")
+        # Local tracepusher.py missing or < 0.10.0. Try path...
         try:
             tracepusher_output = subprocess.run(f"tracepusher --version", capture_output=True, shell=True, text=True)
 
