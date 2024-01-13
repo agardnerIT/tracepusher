@@ -4,7 +4,9 @@ import subprocess
 import secrets
 import argparse
 import sys
+import semver
 
+HAR_TO_OTEL_VERSION="0.10.0"
 
 ##### Start input processing
 
@@ -21,6 +23,7 @@ parser.add_argument('-reqc','--request-cookies', required=False, default="False"
 parser.add_argument('-respc','--response-cookies', required=False, default="False")
 parser.add_argument('-x','--debug', required=False, default="False")
 parser.add_argument('-dr','--dry-run','--dry', required=False, default="False")
+parser.add_argument('-v', '--version', action="version", version=HAR_TO_OTEL_VERSION)
 
 args = parser.parse_args()
 
@@ -100,6 +103,7 @@ if DEBUG_MODE:
     print(f"Add request cookies? {ADD_REQUEST_COOKIES}")
     print(f"Add response cookies? {ADD_RESPONSE_COOKIES}")
     print(f"Debug mode: {DEBUG_MODE}")
+    print(f"Service name: {service_name}")
     print(f"Dry run mode: {DRY_RUN}")
 
 # Credit: https://stackoverflow.com/a/14822210
@@ -113,8 +117,46 @@ def convert_size(size_bytes):
    return "%s %s" % (s, size_name[i])
 
 def run_tracepusher(args=""):
-    output = subprocess.run(f"python3 tracepusher.py {args}" , capture_output=True, shell=True, text=True)
-    return output
+    # Try to run tracepusher binary
+    # Also ensure that tracepusher is at version 0.10.0 or above (required for --start-time flag)
+    # If error occurs, tracepusher is not in the path
+    # fallback to tracepusher.py in current directory
+
+    print(f"ARGS TO TRACEPUSHER: {args}")
+
+    tracepusher_output = ""
+
+    # first try the local copy
+    # if that fails or is the wrong version, try the path version
+    TRACEPUSHER_TRY_PATH = False
+    try:
+        tracepusher_output = subprocess.run(f"python3 tracepusher.py --version", capture_output=True, shell=True, text=True)
+        if tracepusher_output.returncode != 0: # This will happen if tracepusher is available but version < 0.10.0 ie. doesn't have --version flag
+            TRACEPUSHER_TRY_PATH = True
+    except:
+        TRACEPUSHER_TRY_PATH = True
+    
+    if not TRACEPUSHER_TRY_PATH: # local tracepusher is the correct version
+        print("Local tracepusher.py is the correct version. Use it.")
+        try:
+            tracepusher_output = subprocess.run(f"python3 tracepusher.py {args}" , capture_output=True, shell=True, text=True)
+        except:
+            print("Exception caught running local tracepusher.py")
+    else: # trying standalone tracepusher
+        print("Local tracepusher.py missing or < 0.10.0. Try path...")
+        try:
+            tracepusher_output = subprocess.run(f"tracepusher --version", capture_output=True, shell=True, text=True)
+
+            if tracepusher_output.returncode == 0:
+                # Path tracepusher is a suitable version. Use it
+                tracepusher_output = subprocess.run(f"tracepusher {args}" , capture_output=True, shell=True, text=True)
+            else:
+                raise Exception("Cannot find a valid (>= v0.10.0) copy of tracepusher locally or in PATH. Nothing has been sent. Cannot continue. Exiting.")
+        except:
+            print("ERROR: Cannot find a valid (>= v0.10.0) copy of tracepusher locally or in PATH. Nothing has been sent. Cannot continue. Exiting.")
+            exit(1)
+
+    return tracepusher_output
 
 with open(file=file_to_load, mode="r") as har_file:
     har_content = har_file.read()
@@ -230,10 +272,18 @@ for page in page_and_items_array:
 
         span_id = secrets.token_hex(8)
 
-        args = f"--endpoint {endpoint} --insecure {ALLOW_INSECURE} --service-name {service_name} --span-name '{loaded_item['request']['url']}' --duration {int(ui_time_dev_tools)} --duration-type 'ms' --trace-id {trace_id} --span-id {span_id} --start-time {loaded_item['startedDateTime']} --span-attributes {span_attributes} --debug {DEBUG_MODE} --dry-run {DRY_RUN}"
+        print(f"START TIME: {loaded_item['startedDateTime']}")
+        args = f"--endpoint {endpoint} --insecure {str(ALLOW_INSECURE).lower()} --service-name {service_name} --span-name '{loaded_item['request']['url']}' --duration {int(ui_time_dev_tools)} --duration-type 'ms' --trace-id {trace_id} --span-id {span_id} --start-time '{loaded_item['startedDateTime']}' --span-attributes {span_attributes} --debug {DEBUG_MODE} --dry-run {DRY_RUN}"
         
+        if DEBUG_MODE:
+            print(f"Args: {args}")
         # Run tracepusher
         tracepusher_response = run_tracepusher(args)
+
+        if DEBUG_MODE:
+            print(tracepusher_response)
+
+
 
 if DEBUG_MODE:
     print("-"*25)
