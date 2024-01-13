@@ -332,3 +332,9 @@ def test_check_invalid_19_digit_with_end_z_warns():
     assert "Got an explicit start time" in output.stdout
     assert "Provided start time: 123456789012345678Z" in output.stdout
     assert "WARN: --start-time was in an invalid format. Trace will be sent but start time will default to 'now'." in output.stdout
+
+def test_tracepusher_version():
+    args = "--version"
+    output = run_tracepusher(args)
+    assert output.returncode == 0
+    assert "0.10.0" in output.stdout
