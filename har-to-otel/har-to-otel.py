@@ -272,7 +272,6 @@ for page in page_and_items_array:
 
         span_id = secrets.token_hex(8)
 
-        print(f"START TIME: {loaded_item['startedDateTime']}")
         args = f"--endpoint {endpoint} --insecure {str(ALLOW_INSECURE).lower()} --service-name {service_name} --span-name '{loaded_item['request']['url']}' --duration {int(ui_time_dev_tools)} --duration-type 'ms' --trace-id {trace_id} --span-id {span_id} --start-time '{loaded_item['startedDateTime']}' --span-attributes {span_attributes} --debug {DEBUG_MODE} --dry-run {DRY_RUN}"
         
         if DEBUG_MODE:
