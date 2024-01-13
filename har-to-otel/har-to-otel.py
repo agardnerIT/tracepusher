@@ -4,7 +4,6 @@ import subprocess
 import secrets
 import argparse
 import sys
-import semver
 
 HAR_TO_OTEL_VERSION="0.10.0"
 
