@@ -153,8 +153,7 @@ def run_tracepusher(args=""):
             else:
                 raise Exception("Cannot find a valid (>= v0.10.0) copy of tracepusher locally or in PATH. Nothing has been sent. Cannot continue. Exiting.")
         except:
-            print("ERROR: Cannot find a valid (>= v0.10.0) copy of tracepusher locally or in PATH. Nothing has been sent. Cannot continue. Exiting.")
-            exit(1)
+            sys.exit("ERROR: Cannot find a valid (>= v0.10.0) copy of tracepusher locally or in PATH. Nothing has been sent. Cannot continue. Exiting.")
 
     return tracepusher_output
 
