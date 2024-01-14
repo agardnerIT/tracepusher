@@ -20,4 +20,4 @@ ENV PYTHONPATH=/usr/local/lib/python3.12/site-packages
 ENTRYPOINT ["python", "./har-to-otel.py"]
 
 # Run from main directory (not har-to-otel)
-# docker buildx build --platform linux/arm64,linux/amd64 -t gardnera/har-to-otel:0.10.0 -f har-to-otel/Dockerfile .
+# docker buildx build --push --platform linux/arm64,linux/amd64 -t gardnera/har-to-otel:0.10.0 -f har-to-otel/Dockerfile .
