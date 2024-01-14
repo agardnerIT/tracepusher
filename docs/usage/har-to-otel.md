@@ -4,18 +4,22 @@
 
 This tool converts a `.har` file to OpenTelemetry traces and sends them to an OpenTelemetry collector using tracepusher.
 
+Download this tool from the [tracepusher releases assets on GitHub](https://github.com/agardnerIT/tracepusher/releases).
+
+## Prerequisites
+
+This tool requires either:
+
+- A copy of the `tracepusher` binary >= `v0.10.0` in the `PATH`
+- A copy of [tracepusher.py](https://github.com/agardnerIT/tracepusher/blob/main/tracepusher.py) ( >= `v0.10.0`) in the same directory as `har-to-otel`
+
+If you can run `./tracepusher version` and get a version >= `0.10.0`, you're good to proceed.
+
 ## Usage
 
 ```
-docker run \
-  --mount type=bind,source="$(pwd)",target=/files \
-  gardnera/har-to-otel:0.10.0 \
-  -f /files/YOUR-HAR-FILE.har \
-  -ep http://host.docker.internal:4318 \
-  --insecure true
+./har-to-otel -f /path-to-file/YOUR-HAR-FILE.har -ep http://otel-collector-url:4318 --insecure true
 ```
-
-(standalone binaries coming soon...)
 
 ### Optional flags
 
@@ -28,3 +32,4 @@ If set, these are added as span attributes:
 - `--response-cookies [true|false]` (defaults to `false`)
 - `--debug [true|false]` (defaults to `false`)
 - `--dry-run [true|false]` (defaults to `false`)
+- `--version` (prints the `har-to-otel` version)
