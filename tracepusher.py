@@ -311,7 +311,7 @@ if start_time != "":
           else:
             start_time_nanos_since_epoch = unix_time_millis(datetime.datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S.%fZ'))
         except:
-            print("WARN: --start-time value was in an incorrect format. Valid formats: 1) 19 digit integer representing millis since epoch 2) '%Y-%m-%dT%H:%M:%S.%fZ' eg. '2023-11-26T03:05:16.844Z'. Trace will be send with start_time of now.")
+            print("WARN: --start-time value was in an incorrect format. Valid formats: 1) 19 digit integer representing millis since epoch 2) '%Y-%m-%dT%H:%M:%S.%fZ' eg. '2023-11-26T03:05:16.844Z'. Trace will be sent with start_time of now.")
             # The provided start time had an invalid value, so fallback to the trace having a start time of "now"
             HAS_START_TIME = False
 
