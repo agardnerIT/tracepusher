@@ -21,6 +21,8 @@ def initialise_operator(logger, **kwargs):
 
     logger.info("#"*30)
 
+    logger.info(f"Tracepusher Version: {call_tracepusher(tracepusher_args=['--version'], logger=logger)}")
+
     try:
         configuration = config.load_incluster_config()   
     except Exception:
