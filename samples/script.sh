@@ -12,7 +12,7 @@
 # ie. change "tracepusher" to "./tracepusher" on lines 45 and 65
 #
 # == DOWNLOAD CODE - DO THIS ONCE ==
-# tracepusher_version=0.8.0
+# tracepusher_version=0.10.0
 # tracepusher_binary=tracepusher_darwin_${tracepusher_version}
 # wget --quiet -O tracepusher https://github.com/agardnerIT/tracepusher/releases/download/${tracepusher_version}/${tracepusher_binary}
 # chmod +x tracepusher
