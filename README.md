@@ -1,5 +1,7 @@
 # OpenTelemetry tracepusher
 
+> OpenTelemetry traces for every usecase.
+
 ## [> View the tracepusher documentation <](https://agardnerit.github.io/tracepusher)
 
 Generate and push OpenTelemetry Trace data to an endpoint in JSON format.
