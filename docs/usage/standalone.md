@@ -7,6 +7,7 @@ Download the relevant binary from the [GitHub releases page](https://github.com/
 ```
 ./tracepusher \
   -ep http(s)://OTEL-COLLECTOR-ENDPOINT:4318 \
+  --insecure false \
   -sen service_name \
   -spn span_name \
   -dur SPAN_TIME_IN_SECONDS
@@ -25,6 +26,7 @@ Download the relevant binary from the [GitHub releases page](https://github.com/
 --span-attributes key=value key2=value2=type
 --span-events timeOffsetInMillis=EventName=AttributeKey=AttributeValue=type [event2...] [event3...]
 --span-kind UNSPECIFIED|INTERNAL|CLIENT|SERVER|CONSUMER|PRODUCER (defaults to `INTERNAL`)
+--span-status OK|ERROR (defaults to OK)
 ```
 
 For span atttribute types, see [Span Attribute Types](../reference/span-attribute-types.md).
