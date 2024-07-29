@@ -5,7 +5,7 @@ import secrets
 import argparse
 import sys
 
-HAR_TO_OTEL_VERSION="0.10.0"
+HAR_TO_OTEL_VERSION="0.11.0"
 
 ##### Start input processing
 
@@ -199,7 +199,7 @@ for page in page_and_items_array:
         item_page_ref = loaded_item['pageref']
         item_name = loaded_item['request']['url']
 
-        ui_time_dev_tools = round(loaded_item['time']) - round(loaded_item['timings']['_blocked_queueing'])
+        ui_time_dev_tools = round(loaded_item['time']) - round(loaded_item['timings']['blocked'])
         span_attributes = ""
 
         if page_ref == item_page_ref and item_name == page_name:
@@ -235,11 +235,15 @@ for page in page_and_items_array:
                     span_attributes += f"request.cookies.cookie.{cookie_name}.{key}=\"{cookie[key]}\" "
 
         # Add response details
-        span_attributes += f"response.status={loaded_item['response']['status']} "
-        span_attributes += f"response.statusText=\"{loaded_item['response']['statusText']}\" "
-        span_attributes += f"response.httpVersion={loaded_item['response']['httpVersion']} "
-        span_attributes += f"response.content.size={loaded_item['response']['content']['size']} "
-        span_attributes += f"response._transferSize={loaded_item['response']['_transferSize']} "
+        try:
+            span_attributes += f"response.status={loaded_item['response']['status']} "
+            span_attributes += f"response.statusText=\"{loaded_item['response']['statusText']}\" "
+            span_attributes += f"response.httpVersion={loaded_item['response']['httpVersion']} "
+            span_attributes += f"response.content.size={loaded_item['response']['content']['size']} "
+            span_attributes += f"response._transferSize={loaded_item['response']['_transferSize']} "
+        except:
+            pass
+        
         # Add response headers
         if ADD_RESPONSE_HEADERS:
             if DEBUG_MODE:
