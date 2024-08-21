@@ -91,7 +91,7 @@ for span in sub_spans_to_send:
 
     args = [
         "tracepusher",
-        "--endpointe", OTEL_COLLECTOR_URL_HTTP,
+        "--endpoint", OTEL_COLLECTOR_URL_HTTP,
         "--insecure", "true",
         "--service-name", SERVICE_NAME,
         "--span-name", span_name,
