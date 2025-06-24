@@ -18,7 +18,6 @@ with open("/workspaces/.codespaces/.persistedshare/creation.log", mode="r") as l
             activity_list.append(line.strip())
 
 log_start_time = activity_list[0][:24]
-#print(f"Aside from dumping generic info, log started at: {log_start_time}")
 
 trace_id = secrets.token_hex(16)
 main_span_id = secrets.token_hex(8)
